@@ -1,0 +1,10 @@
+﻿<Window x:Class="ArtemisWest.CallMe.Shell.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:cal="clr-namespace:Microsoft.Practices.Prism.Regions;assembly=Microsoft.Practices.Prism"
+        Title="MainWindow" Height="350" Width="525">
+    <DockPanel>
+        <ContentControl cal:RegionManager.RegionName="ProviderSettingsRegion"/>
+        
+    </DockPanel>
+</Window>
