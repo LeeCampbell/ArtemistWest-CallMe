@@ -22,11 +22,10 @@ namespace ArtemisWest.CallMe.Google.Authorization
         private readonly BehaviorSubject<AuthorizationStatus> _status = new BehaviorSubject<AuthorizationStatus>(AuthorizationStatus.NotAuthorized);
         private readonly IResourceScope[] _availableServices;
         private readonly ObservableCollection<IResourceScope> _selectedServices;
-
         private RequestAuthorizationCode _callback;
         private string _authorizationCode;
         private Session _currentSession;
-
+        
         public AuthorizationModel(IEnumerable<IResourceScope> availableServices)
         {
             _availableServices = availableServices.ToArray();
@@ -53,10 +52,20 @@ namespace ArtemisWest.CallMe.Google.Authorization
             _callback = callback;
         }
 
+        private Session CurrentSession
+        {
+            get { return _currentSession; }
+            set
+            {
+                _currentSession = value;
+                if (_currentSession != null) _status.OnNext(AuthorizationStatus.Authorized);
+            }
+        }
+
         public IObservable<string> RequestAccessToken()
         {
-            return Observable.Return(_currentSession)
-                .Concat(CreateSession().Do(session => _currentSession = session))
+            return Observable.Return(CurrentSession)
+                .Concat(CreateSession().Do(session => CurrentSession = session))
                 .Where(session => session != null && !session.HasExpired())
                 .Take(1)
                 .Select(session => session.AccessToken);

@@ -34,6 +34,7 @@ namespace ArtemisWest.CallMe.Google.Authorization
             }
         }
 
+        #region INotifyPropertyChanged implementation
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -41,5 +42,6 @@ namespace ArtemisWest.CallMe.Google.Authorization
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
     }
 }

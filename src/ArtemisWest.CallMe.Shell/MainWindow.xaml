@@ -5,7 +5,6 @@
         xmlns:infBehaviors="clr-namespace:ArtemisWest.CallMe.Shell.PrismExtensions"
         infBehaviors:RegionPopupBehaviors.CreatePopupRegionWithName="WindowRegion"
         Title="MainWindow" Height="350" Width="525">
-    <!--infBehaviors:RegionPopupBehaviors.ContainerWindowStyle="{StaticResource WindowRegionStyle}"-->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="70" />

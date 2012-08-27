@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using ArtemisWest.CallMe.Contract;
@@ -10,7 +11,7 @@ using Microsoft.Practices.Prism.Regions;
 
 namespace ArtemisWest.CallMe.Google
 {
-    public class GoogleProvider : IProvider
+    public class GoogleProvider : IProvider, INotifyPropertyChanged
     {
         private static readonly Uri _image = new Uri("pack://application:,,,/ArtemisWest.CallMe.Google;component/Google_64x64.png");
         private readonly IAuthorizationModel _authorizationModel;
@@ -25,8 +26,14 @@ namespace ArtemisWest.CallMe.Google
             _authorizationModel = authorizationModel;
             _regionManager = regionManager;
             _loginView = loginView;
+            _regionManager.Regions["WindowRegion"].Add(_loginView);
             _authorizationModel.RegisterAuthorizationCallback(ShowGoogleLogin);
             _authorizeCommand = new DelegateCommand(RequestAuthorization, () => !Status.IsAuthorized && !Status.IsProcessing);
+            _authorizationModel.Status.Subscribe(_ => 
+            {
+                OnPropertyChanged("Status");
+                _authorizeCommand.RaiseCanExecuteChanged();
+            });
         }
 
         public string Name
@@ -56,23 +63,32 @@ namespace ArtemisWest.CallMe.Google
 
         private IObservable<string> ShowGoogleLogin(Uri authorizationUri)
         {
-            //throw new NotImplementedException();
-            //TODO: Ensure I am on the dispatcher.
-            //TODO: Block until the Window closes
-            //TODO: Disposal should close the window too
-
             return Observable.Create<string>(
                 o =>
                 {
                     _loginView.ViewModel.AuthorizationUri = authorizationUri;
-                    //_regionManager.AddToRegion("WindowRegion", _loginView);
-                    _regionManager.Regions["WindowRegion"].Add(_loginView);
                     _regionManager.Regions["WindowRegion"].Activate(_loginView);
-                    return Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+                    
+                    var isActiveChanged = Observable.FromEventPattern<EventHandler, EventArgs>(
+                            h => _loginView.IsActiveChanged += h,
+                            h => _loginView.IsActiveChanged -= h);
+
+                    var vmPropertyChanged = Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
                             h => _loginView.ViewModel.PropertyChanged += h,
-                            h => _loginView.ViewModel.PropertyChanged -= h)
-                        .Where(e => e.EventArgs.PropertyName == "AuthorizationCode")
+                            h => _loginView.ViewModel.PropertyChanged -= h);
+
+                    var authorizationCodeChanged = vmPropertyChanged.Where(e => e.EventArgs.PropertyName == "AuthorizationCode")
                         .Select(_ => _loginView.ViewModel.AuthorizationCode)
+                        .TakeUntil(isActiveChanged.Where(_=> !_loginView.IsActive))
+                        .Take(1)
+                        .Do(
+                            x=>Console.WriteLine("ShowGoogleLogin.OnNext({0})", x),
+                            ex=>Console.WriteLine("ShowGoogleLogin.OnError({0})", ex),
+                            ()=>Console.WriteLine("ShowGoogleLogin.OnCompleted()")
+                            );
+                    return Observable.Using(
+                            ()=>Disposable.Create(()=>_regionManager.Regions["WindowRegion"].Deactivate(_loginView)),
+                            _=>authorizationCodeChanged)
                         .Subscribe(o);
                 });
         }
@@ -81,5 +97,14 @@ namespace ArtemisWest.CallMe.Google
         {
             _authorizationModel.RequestAccessToken().Subscribe();
         }
+
+        #region INotifyPropertyChanged implementation
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
     }
 }

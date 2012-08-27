@@ -87,6 +87,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GrayScaleConverter.cs" />
     <Compile Include="HostModule.cs" />
     <Compile Include="PrismExtensions\RegionPopupBehaviors.cs" />
     <Compile Include="PrismExtensions\DialogActivationBehavior.cs" />

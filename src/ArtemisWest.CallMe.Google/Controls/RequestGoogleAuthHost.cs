@@ -55,7 +55,7 @@ namespace ArtemisWest.CallMe.Google.Controls
 
         public static readonly DependencyProperty AuthorizationCodeProperty =
             DependencyProperty.Register("AuthorizationCode", typeof(string), typeof(RequestGoogleAuthHost),
-                                        new PropertyMetadata(null));
+                                        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         #endregion
 

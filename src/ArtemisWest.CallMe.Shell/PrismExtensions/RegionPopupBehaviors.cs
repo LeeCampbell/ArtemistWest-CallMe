@@ -20,6 +20,7 @@ using System.Windows;
 using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.ServiceLocation;
 using System;
+using Microsoft.Practices.Prism.Regions.Behaviors;
 
 namespace ArtemisWest.CallMe.Shell.PrismExtensions
 {
@@ -136,6 +137,7 @@ namespace ArtemisWest.CallMe.Shell.PrismExtensions
                 behavior.HostControl = owner;
 
                 region.Behaviors.Add(DialogActivationBehavior.BehaviorKey, behavior);
+                region.Behaviors.Add(RegionActiveAwareBehavior.BehaviorKey, new RegionActiveAwareBehavior());
                 regionManager.Regions.Add(regionName, region);
             }
         }
