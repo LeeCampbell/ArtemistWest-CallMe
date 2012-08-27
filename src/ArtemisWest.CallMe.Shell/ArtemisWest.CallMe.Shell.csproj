@@ -13,6 +13,8 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -86,13 +88,18 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="HostModule.cs" />
+    <Compile Include="PrismExtensions\RegionPopupBehaviors.cs" />
+    <Compile Include="PrismExtensions\DialogActivationBehavior.cs" />
+    <Compile Include="PrismExtensions\IWindow.cs" />
+    <Compile Include="PrismExtensions\WindowDialogActivationBehavior.cs" />
+    <Compile Include="PrismExtensions\WindowWrapper.cs" />
     <Compile Include="ProviderSettings\ProviderSettingsView.xaml.cs">
       <DependentUpon>ProviderSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProviderSettings\ProviderSettingsViewModel.cs" />
     <Compile Include="UnityExtensions\EnumerableResolutionStrategy.cs" />
     <Compile Include="UnityExtensions\LazyResolveBuildPlanPolicy.cs" />
-    <Compile Include="UnityExtensions\LazySupportExtension.cs" />
+    <Compile Include="UnityExtensions\GenericSupportExtension.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -147,6 +154,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

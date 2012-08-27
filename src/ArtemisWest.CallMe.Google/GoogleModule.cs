@@ -10,8 +10,18 @@ namespace ArtemisWest.CallMe.Google
         public GoogleModule(IUnityContainer container)
         {
             Console.WriteLine("GoogleModule()");
+            
+            container.RegisterType<Contract.IResourceScope, Contacts.ContactResourceScope>();
+            //container.RegisterType<Contract.IResourceScope, Contacts.CalendarResourceScope>();
+            //container.RegisterType<Contract.IResourceScope, Contacts.DocsResourceScope>();
+            //container.RegisterType<Contract.IResourceScope, Contacts.EmailResourceScope>();
+
+            container.RegisterType<Authorization.IGoogleLoginView, Authorization.GoogleLoginView>();
+            container.RegisterType<Authorization.IAuthorizationModel, Authorization.AuthorizationModel>();
+            
             container.RegisterType<Contract.IProvider, GoogleProvider>();
         }
+
         public void Initialize()
         {
             //Register the providers. The thing that allows the user to choose google as an auth and selecte the services we request.
@@ -21,9 +31,6 @@ namespace ArtemisWest.CallMe.Google
             //When making a service request, it should be passed via the serivce/repo that can communicate to thte Auth model that Auth has lapsed. 
             //  It should then disable the Provider and it's child services
             Console.WriteLine("GoogleModule.Initialize()");
-
-
-
         }
     }
 }

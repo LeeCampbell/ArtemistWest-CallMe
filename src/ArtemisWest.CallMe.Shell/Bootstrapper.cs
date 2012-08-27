@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
-using ArtemisWest.CallMe.Contract;
+﻿using System.Windows;
 using ArtemisWest.CallMe.Shell.UnityExtensions;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.UnityExtensions;
@@ -40,7 +37,7 @@ namespace ArtemisWest.CallMe.Shell
         protected override void ConfigureContainer()
         {
             base.ConfigureContainer();
-            Container.AddNewExtension<LazySupportExtension>();
+            Container.AddNewExtension<GenericSupportExtension>();
         }
 
         protected override void ConfigureServiceLocator()

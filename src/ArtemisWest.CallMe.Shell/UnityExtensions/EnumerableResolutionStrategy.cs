@@ -6,6 +6,7 @@ using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Utility;
 
+//Taken from http://pwlodek.blogspot.co.uk/2010/05/lazy-and-ienumerable-support-comes-to.html
 namespace ArtemisWest.CallMe.Shell.UnityExtensions
 {
     /// <summary>
@@ -16,10 +17,10 @@ namespace ArtemisWest.CallMe.Shell.UnityExtensions
     {
         private delegate object Resolver(IBuilderContext context);
 
-        private static readonly MethodInfo GenericResolveEnumerableMethod =
+        private static readonly MethodInfo _genericResolveEnumerableMethod =
             typeof(EnumerableResolutionStrategy).GetMethod("ResolveEnumerable", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.DeclaredOnly);
 
-        private static readonly MethodInfo GenericResolveLazyEnumerableMethod =
+        private static readonly MethodInfo _genericResolveLazyEnumerableMethod =
             typeof(EnumerableResolutionStrategy).GetMethod("ResolveLazyEnumerable", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.DeclaredOnly);
 
         /// <summary>
@@ -37,11 +38,11 @@ namespace ArtemisWest.CallMe.Shell.UnityExtensions
                 if (IsResolvingLazy(typeToBuild))
                 {
                     typeToBuild = GetTypeToBuild(typeToBuild);
-                    resolverMethod = GenericResolveLazyEnumerableMethod.MakeGenericMethod(typeToBuild);
+                    resolverMethod = _genericResolveLazyEnumerableMethod.MakeGenericMethod(typeToBuild);
                 }
                 else
                 {
-                    resolverMethod = GenericResolveEnumerableMethod.MakeGenericMethod(typeToBuild);
+                    resolverMethod = _genericResolveEnumerableMethod.MakeGenericMethod(typeToBuild);
                 }
 
                 var resolver = (Resolver)Delegate.CreateDelegate(typeof(Resolver), resolverMethod);
@@ -67,6 +68,8 @@ namespace ArtemisWest.CallMe.Shell.UnityExtensions
                    type.GetGenericTypeDefinition() == typeof(Lazy<>);
         }
 
+        // ReSharper disable UnusedMember.Local
+        //Members access via reflection.
         private static object ResolveLazyEnumerable<T>(IBuilderContext context)
         {
             var container = context.NewBuildUp<IUnityContainer>();
@@ -85,6 +88,7 @@ namespace ArtemisWest.CallMe.Shell.UnityExtensions
 
             return results;
         }
+        // ReSharper restore UnusedMember.Local
 
         private static IEnumerable<object> ResolveAll(IUnityContainer container, Type type, Type typeWrapper)
         {

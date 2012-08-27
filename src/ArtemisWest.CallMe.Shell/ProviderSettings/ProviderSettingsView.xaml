@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Expander Header="Providers">
+    <!--<Expander Header="Providers">-->
         <ItemsControl ItemsSource="{Binding Providers}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -21,5 +21,5 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-    </Expander>
+    <!--</Expander>-->
 </UserControl>

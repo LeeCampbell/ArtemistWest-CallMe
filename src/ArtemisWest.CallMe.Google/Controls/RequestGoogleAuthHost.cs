@@ -26,7 +26,22 @@ namespace ArtemisWest.CallMe.Google.Controls
 
         public static readonly DependencyProperty AuthorizationUriProperty =
             DependencyProperty.Register("AuthorizationUri", typeof(Uri), typeof(RequestGoogleAuthHost),
-                                        new PropertyMetadata());
+                                        new PropertyMetadata(OnAuthorizationUriPropertyChanged));
+
+        //The WebBrowser.Source property is not a DependencyProperty so does not support TemplateBinding hence why we do it in code.
+        private static void OnAuthorizationUriPropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+        {
+            var self = (RequestGoogleAuthHost) source;
+            self.OnAuthorizationUriChanged();
+        }
+
+        private void OnAuthorizationUriChanged()
+        {
+            if(_webBrowser!=null)
+            {
+                _webBrowser.Source = AuthorizationUri;
+            }
+        }
 
         #endregion
 
@@ -52,7 +67,10 @@ namespace ArtemisWest.CallMe.Google.Controls
                 _webBrowser.LoadCompleted -= OnWebBrowserLoadCompleted;
             _webBrowser = (WebBrowser)Template.FindName(WebBrowesrTemplateName, this);
             if (_webBrowser != null)
+            {
                 _webBrowser.LoadCompleted += OnWebBrowserLoadCompleted;
+                _webBrowser.Source = AuthorizationUri;
+            }
         }
 
         private void OnWebBrowserLoadCompleted(object sender, NavigationEventArgs e)

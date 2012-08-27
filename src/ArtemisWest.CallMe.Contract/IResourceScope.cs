@@ -1,7 +1,10 @@
+using System;
+
 namespace ArtemisWest.CallMe.Contract
 {
-    public interface IResourceScope//TODO: rename to ResourceService?
+    public interface IResourceScope
     {
         string Name { get; }
+        Uri Resource { get; }
     }
 }

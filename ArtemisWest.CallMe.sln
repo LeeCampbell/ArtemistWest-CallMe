@@ -2,10 +2,20 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtemisWest.CallMe.Shell", "src\ArtemisWest.CallMe.Shell\ArtemisWest.CallMe.Shell.csproj", "{5A6A9E01-511F-4A43-8150-7CD5AD8A5563}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9D9AD720-6091-4F4E-9D38-16DF71F61B7E} = {9D9AD720-6091-4F4E-9D38-16DF71F61B7E}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtemisWest.CallMe.Google", "src\ArtemisWest.CallMe.Google\ArtemisWest.CallMe.Google.csproj", "{9D9AD720-6091-4F4E-9D38-16DF71F61B7E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtemisWest.CallMe.Contract", "src\ArtemisWest.CallMe.Contract\ArtemisWest.CallMe.Contract.csproj", "{DEE079B9-3A51-4066-ADA5-C06271ECEBD3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{175E458E-F29A-4E8C-A5BD-0E289009AF7B}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

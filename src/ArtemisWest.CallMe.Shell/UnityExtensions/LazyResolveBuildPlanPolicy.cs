@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Unity;
 
+//Taken from http://pwlodek.blogspot.co.uk/2010/05/lazy-and-ienumerable-support-comes-to.html
 namespace ArtemisWest.CallMe.Shell.UnityExtensions
 {
     /// <summary>
@@ -19,9 +19,9 @@ namespace ArtemisWest.CallMe.Shell.UnityExtensions
                 var typeToBuild = GetTypeToBuild(context.BuildKey.Type);
                 var nameToBuild = context.BuildKey.Name;
 
-                context.Existing = IsResolvingIEnumerable(typeToBuild) ?
-                                                                           CreateResolveAllResolver(currentContainer, typeToBuild) :
-                                                                                                                                       CreateResolver(currentContainer, typeToBuild, nameToBuild);
+                context.Existing = IsResolvingIEnumerable(typeToBuild) 
+                    ? CreateResolveAllResolver(currentContainer, typeToBuild) 
+                    : CreateResolver(currentContainer, typeToBuild, nameToBuild);
 
                 DynamicMethodConstructorStrategy.SetPerBuildSingleton(context);
             }
@@ -38,64 +38,69 @@ namespace ArtemisWest.CallMe.Shell.UnityExtensions
                    type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
         }
 
-        private static object CreateResolver(IUnityContainer currentContainer, Type typeToBuild,
-                                             string nameToBuild)
+        private static object CreateResolver(IUnityContainer currentContainer, Type typeToBuild, string nameToBuild)
         {
-            Type lazyType = typeof(Lazy<>).MakeGenericType(typeToBuild);
-            Type trampolineType = typeof(ResolveTrampoline<>).MakeGenericType(typeToBuild);
-            Type delegateType = typeof(Func<>).MakeGenericType(typeToBuild);
-            MethodInfo resolveMethod = trampolineType.GetMethod("Resolve");
+            var lazyType = typeof(Lazy<>).MakeGenericType(typeToBuild);
+            var trampolineType = typeof(ResolveTrampoline<>).MakeGenericType(typeToBuild);
+            var delegateType = typeof(Func<>).MakeGenericType(typeToBuild);
+            var resolveMethod = trampolineType.GetMethod("Resolve");
 
-            object trampoline = Activator.CreateInstance(trampolineType, currentContainer, nameToBuild);
-            object trampolineDelegate = Delegate.CreateDelegate(delegateType, trampoline, resolveMethod);
+            var trampoline = Activator.CreateInstance(trampolineType, currentContainer, nameToBuild);
+            var trampolineDelegate = Delegate.CreateDelegate(delegateType, trampoline, resolveMethod);
 
             return Activator.CreateInstance(lazyType, trampolineDelegate);
         }
 
         private static object CreateResolveAllResolver(IUnityContainer currentContainer, Type enumerableType)
         {
-            Type typeToBuild = GetTypeToBuild(enumerableType);
-            Type lazyType = typeof(Lazy<>).MakeGenericType(enumerableType);
-            Type trampolineType = typeof(ResolveAllTrampoline<>).MakeGenericType(typeToBuild);
-            Type delegateType = typeof(Func<>).MakeGenericType(enumerableType);
-            MethodInfo resolveAllMethod = trampolineType.GetMethod("ResolveAll");
+            var typeToBuild = GetTypeToBuild(enumerableType);
+            var lazyType = typeof(Lazy<>).MakeGenericType(enumerableType);
+            var trampolineType = typeof(ResolveAllTrampoline<>).MakeGenericType(typeToBuild);
+            var delegateType = typeof(Func<>).MakeGenericType(enumerableType);
+            var resolveAllMethod = trampolineType.GetMethod("ResolveAll");
 
-            object trampoline = Activator.CreateInstance(trampolineType, currentContainer);
-            object trampolineDelegate = Delegate.CreateDelegate(delegateType, trampoline, resolveAllMethod);
+            var trampoline = Activator.CreateInstance(trampolineType, currentContainer);
+            var trampolineDelegate = Delegate.CreateDelegate(delegateType, trampoline, resolveAllMethod);
 
             return Activator.CreateInstance(lazyType, trampolineDelegate);
         }
 
-        private class ResolveTrampoline<T>
+        private sealed class ResolveTrampoline<T>
         {
-            private readonly IUnityContainer m_Container;
-            private readonly string m_Name;
+            private readonly IUnityContainer _container;
+            private readonly string _name;
 
             public ResolveTrampoline(IUnityContainer container, string name)
             {
-                m_Container = container;
-                m_Name = name;
+                _container = container;
+                _name = name;
             }
 
+            // ReSharper disable UnusedMember.Local
+            // Accessed via reflection
             public T Resolve()
             {
-                return m_Container.Resolve<T>(m_Name);
+                return _container.Resolve<T>(_name);
             }
+            // ReSharper restore UnusedMember.Local
         }
 
-        private class ResolveAllTrampoline<T>
+        private sealed class ResolveAllTrampoline<T>
         {
-            private readonly IUnityContainer m_Container;
+            private readonly IUnityContainer _container;
 
             public ResolveAllTrampoline(IUnityContainer container)
             {
-                m_Container = container;
+                _container = container;
             }
 
+            // ReSharper disable UnusedMember.Local
+            // Accessed via reflection
             public IEnumerable<T> ResolveAll()
             {
-                return m_Container.ResolveAll<T>();
+                return _container.ResolveAll<T>();
             }
+            // ReSharper restore UnusedMember.Local
         }
     }
 }
