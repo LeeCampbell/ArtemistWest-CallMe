@@ -40,6 +40,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorizationStatus.cs" />
+    <Compile Include="Contacts\IContactQueryProvider.cs" />
+    <Compile Include="IIdentity.cs" />
+    <Compile Include="IIdentityProvider.cs" />
     <Compile Include="IProvider.cs" />
     <Compile Include="IResourceScope.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

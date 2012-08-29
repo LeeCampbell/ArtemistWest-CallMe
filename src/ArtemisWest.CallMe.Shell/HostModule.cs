@@ -18,8 +18,14 @@ namespace ArtemisWest.CallMe.Shell
 
         public void Initialize()
         {
+            var searchModel = _container.Resolve<Search.SearchModel>();
+            _container.RegisterInstance<Search.ISearchModel>(searchModel);
+
             var settingsView = _container.Resolve<ProviderSettings.ProviderSettingsView>();
             _regionManager.AddToRegion("ProviderSettingsRegion", settingsView);
+
+            var searchView = _container.Resolve<Search.SearchView>();
+            _regionManager.AddToRegion("SearchRegion", searchView);
         }
     }
 }

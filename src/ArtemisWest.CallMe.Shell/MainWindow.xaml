@@ -8,9 +8,16 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="70" />
-            <RowDefinition  Height="*"/>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <ContentControl cal:RegionManager.RegionName="ProviderSettingsRegion"/>
+        <ContentControl cal:RegionManager.RegionName="SearchRegion"
+                        Grid.Row="1"/>
+        <ScrollViewer Grid.Row="2"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Hidden">
 
+        </ScrollViewer>
     </Grid>
 </Window>
