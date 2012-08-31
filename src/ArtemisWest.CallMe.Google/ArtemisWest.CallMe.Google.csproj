@@ -96,6 +96,12 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contacts\GoogleContactQueryProvider.cs" />
+    <Compile Include="GoogleProviderDescription.cs" />
+    <Compile Include="IWebRequstService.cs" />
+    <Compile Include="ObservableExtensions.cs" />
+    <Compile Include="RestRequest.cs" />
+    <Compile Include="WebRequstService.cs" />
     <Page Include="Authorization\GoogleLoginView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -113,6 +119,7 @@
     <Compile Include="Authorization\IGoogleLoginView.cs" />
     <Compile Include="Authorization\Session.cs" />
     <Compile Include="Contacts\ContactResourceScope.cs" />
+    <Compile Include="Contacts\GoogleIdentityProvider.cs" />
     <Compile Include="Controls\RequestGoogleAuthHost.cs" />
   </ItemGroup>
   <ItemGroup>

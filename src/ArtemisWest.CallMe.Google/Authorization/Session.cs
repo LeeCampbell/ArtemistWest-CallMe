@@ -2,7 +2,7 @@ using System;
 
 namespace ArtemisWest.CallMe.Google.Authorization
 {
-    public sealed class Session
+    internal sealed class Session
     {
         private readonly string _accessToken;
         private readonly string _refreshToken;

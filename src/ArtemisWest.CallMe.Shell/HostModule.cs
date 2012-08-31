@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.Unity;
@@ -26,6 +25,9 @@ namespace ArtemisWest.CallMe.Shell
 
             var searchView = _container.Resolve<Search.SearchView>();
             _regionManager.AddToRegion("SearchRegion", searchView);
+
+            var contactView = _container.Resolve<UI.Contact.ContactSearchResultsView>();
+            _regionManager.AddToRegion("ContactRegion", contactView);
         }
     }
 }

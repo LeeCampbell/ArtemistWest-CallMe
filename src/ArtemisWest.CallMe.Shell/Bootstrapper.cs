@@ -4,6 +4,7 @@ using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.Unity;
 
+//TODO: Create a common project for ObservableEx, Converters, LogEx
 namespace ArtemisWest.CallMe.Shell
 {
     public class Bootstrapper : UnityBootstrapper

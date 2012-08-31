@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArtemisWest.CallMe.Contract
 {
     public interface IIdentityProvider
     {
-        IObservable<IProfile> FindRelatedIdentities(string query);
+        IObservable<IProfile> FindProfile(string query);
     }
 }

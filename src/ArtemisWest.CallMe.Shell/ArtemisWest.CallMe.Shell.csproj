@@ -101,6 +101,7 @@
     </ApplicationDefinition>
     <Compile Include="GrayScaleConverter.cs" />
     <Compile Include="HostModule.cs" />
+    <Compile Include="ObservableExtensions.cs" />
     <Compile Include="PrismExtensions\RegionPopupBehaviors.cs" />
     <Compile Include="PrismExtensions\DialogActivationBehavior.cs" />
     <Compile Include="PrismExtensions\IWindow.cs" />
@@ -110,11 +111,16 @@
       <DependentUpon>ProviderSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProviderSettings\ProviderSettingsViewModel.cs" />
+    <Compile Include="Search\ISearchModel.cs" />
+    <Compile Include="Search\SearchModel.cs" />
     <Compile Include="Search\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Search\SearchViewModel.cs" />
     <Compile Include="UI\Contact\ContactSearchResults.cs" />
+    <Compile Include="UI\Contact\ContactSearchResultsView.xaml.cs">
+      <DependentUpon>ContactSearchResultsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UnityExtensions\EnumerableResolutionStrategy.cs" />
     <Compile Include="UnityExtensions\LazyResolveBuildPlanPolicy.cs" />
     <Compile Include="UnityExtensions\GenericSupportExtension.cs" />
@@ -137,6 +143,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Search\SearchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Contact\ContactSearchResultsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -10,16 +10,21 @@ namespace ArtemisWest.CallMe.Google
         public GoogleModule(IUnityContainer container)
         {
             Console.WriteLine("GoogleModule()");
-            
-            container.RegisterType<Contract.IResourceScope, Contacts.ContactResourceScope>();
+
+            container.RegisterType<Contract.IProvider, GoogleProvider>(new ContainerControlledLifetimeManager());
+            container.RegisterType<Contract.IIdentityProvider, Contacts.GoogleIdentityProvider>(new ContainerControlledLifetimeManager());
+            container.RegisterType<Contract.IResourceScope, Contacts.ContactResourceScope>(new ContainerControlledLifetimeManager());
             //container.RegisterType<Contract.IResourceScope, Contacts.CalendarResourceScope>();
             //container.RegisterType<Contract.IResourceScope, Contacts.DocsResourceScope>();
             //container.RegisterType<Contract.IResourceScope, Contacts.EmailResourceScope>();
 
             container.RegisterType<Authorization.IGoogleLoginView, Authorization.GoogleLoginView>();
-            container.RegisterType<Authorization.IAuthorizationModel, Authorization.AuthorizationModel>();
-            
-            container.RegisterType<Contract.IProvider, GoogleProvider>();
+            container.RegisterType<Authorization.IAuthorizationModel, Authorization.AuthorizationModel>(new ContainerControlledLifetimeManager());
+
+            container.RegisterType<IWebRequstService, WebRequstService>(new ContainerControlledLifetimeManager());
+
+
+            container.RegisterType<Contract.Contacts.IContactQueryProvider, Contacts.GoogleContactQueryProvider>(new ContainerControlledLifetimeManager());
         }
 
         public void Initialize()

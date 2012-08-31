@@ -41,10 +41,14 @@
   <ItemGroup>
     <Compile Include="AuthorizationStatus.cs" />
     <Compile Include="Contacts\IContactQueryProvider.cs" />
-    <Compile Include="IIdentity.cs" />
     <Compile Include="IIdentityProvider.cs" />
+    <Compile Include="IPersonalIdentifier.cs" />
+    <Compile Include="IProfile.cs" />
     <Compile Include="IProvider.cs" />
+    <Compile Include="IProviderDescription.cs" />
     <Compile Include="IResourceScope.cs" />
+    <Compile Include="PersonalIdentifier.cs" />
+    <Compile Include="Profile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

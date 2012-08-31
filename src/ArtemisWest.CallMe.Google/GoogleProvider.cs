@@ -13,7 +13,6 @@ namespace ArtemisWest.CallMe.Google
 {
     public class GoogleProvider : IProvider, INotifyPropertyChanged
     {
-        private static readonly Uri _image = new Uri("pack://application:,,,/ArtemisWest.CallMe.Google;component/Google_64x64.png");
         private readonly IAuthorizationModel _authorizationModel;
         private readonly IRegionManager _regionManager;
         private readonly IGoogleLoginView _loginView;
@@ -29,7 +28,7 @@ namespace ArtemisWest.CallMe.Google
             _regionManager.Regions["WindowRegion"].Add(_loginView);
             _authorizationModel.RegisterAuthorizationCallback(ShowGoogleLogin);
             _authorizeCommand = new DelegateCommand(RequestAuthorization, () => !Status.IsAuthorized && !Status.IsProcessing);
-            _authorizationModel.Status.Subscribe(_ => 
+            _authorizationModel.Status.Subscribe(_ =>
             {
                 OnPropertyChanged("Status");
                 _authorizeCommand.RaiseCanExecuteChanged();
@@ -38,11 +37,11 @@ namespace ArtemisWest.CallMe.Google
 
         public string Name
         {
-            get { return "Google"; }
+            get { return GoogleProviderDescription.Instance.Name; }
         }
         public Uri Image
         {
-            get { return _image; }
+            get { return GoogleProviderDescription.Instance.Image; }
         }
         public AuthorizationStatus Status
         {
@@ -68,7 +67,7 @@ namespace ArtemisWest.CallMe.Google
                 {
                     _loginView.ViewModel.AuthorizationUri = authorizationUri;
                     _regionManager.Regions["WindowRegion"].Activate(_loginView);
-                    
+
                     var isActiveChanged = Observable.FromEventPattern<EventHandler, EventArgs>(
                             h => _loginView.IsActiveChanged += h,
                             h => _loginView.IsActiveChanged -= h);
@@ -79,16 +78,16 @@ namespace ArtemisWest.CallMe.Google
 
                     var authorizationCodeChanged = vmPropertyChanged.Where(e => e.EventArgs.PropertyName == "AuthorizationCode")
                         .Select(_ => _loginView.ViewModel.AuthorizationCode)
-                        .TakeUntil(isActiveChanged.Where(_=> !_loginView.IsActive))
+                        .TakeUntil(isActiveChanged.Where(_ => !_loginView.IsActive))
                         .Take(1)
                         .Do(
-                            x=>Console.WriteLine("ShowGoogleLogin.OnNext({0})", x),
-                            ex=>Console.WriteLine("ShowGoogleLogin.OnError({0})", ex),
-                            ()=>Console.WriteLine("ShowGoogleLogin.OnCompleted()")
+                            x => Console.WriteLine("ShowGoogleLogin.OnNext({0})", x),
+                            ex => Console.WriteLine("ShowGoogleLogin.OnError({0})", ex),
+                            () => Console.WriteLine("ShowGoogleLogin.OnCompleted()")
                             );
                     return Observable.Using(
-                            ()=>Disposable.Create(()=>_regionManager.Regions["WindowRegion"].Deactivate(_loginView)),
-                            _=>authorizationCodeChanged)
+                            () => Disposable.Create(() => _regionManager.Regions["WindowRegion"].Deactivate(_loginView)),
+                            _ => authorizationCodeChanged)
                         .Subscribe(o);
                 });
         }
