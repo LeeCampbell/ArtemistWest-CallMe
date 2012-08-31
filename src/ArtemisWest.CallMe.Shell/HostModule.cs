@@ -17,8 +17,11 @@ namespace ArtemisWest.CallMe.Shell
 
         public void Initialize()
         {
-            var searchModel = _container.Resolve<Search.SearchModel>();
-            _container.RegisterInstance<Search.ISearchModel>(searchModel);
+            _container.RegisterType<Contract.ILocalStore, LocalStore>(new ContainerControlledLifetimeManager());
+            _container.RegisterType<Search.ISearchModel, Search.SearchModel>(new ContainerControlledLifetimeManager());
+            
+            //var searchModel = _container.Resolve<Search.SearchModel>();
+            //_container.RegisterInstance<Search.ISearchModel>(searchModel);
 
             var settingsView = _container.Resolve<ProviderSettings.ProviderSettingsView>();
             _regionManager.AddToRegion("ProviderSettingsRegion", settingsView);

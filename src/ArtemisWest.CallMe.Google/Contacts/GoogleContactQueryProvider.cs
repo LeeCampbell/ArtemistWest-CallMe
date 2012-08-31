@@ -36,12 +36,12 @@ namespace ArtemisWest.CallMe.Google.Contacts
                 .Take(1);
         }
 
-        private WebRequestParameters CreateRequestParams(IProfile activeProfile, string accessToken)
+        private HttpRequestParameters CreateRequestParams(IProfile activeProfile, string accessToken)
         {
             //var query = string.Join(" ", activeProfile.Identifiers.Select(i => i.Value));
             var query = activeProfile.Identifiers.Select(i => i.Value).FirstOrDefault() ?? string.Empty;
 
-            var param = new WebRequestParameters(@"https://www.google.com/m8/feeds/contacts/default/full");
+            var param = new HttpRequestParameters(@"https://www.google.com/m8/feeds/contacts/default/full");
             param.QueryStringParameters.Add("access_token", accessToken);
             param.QueryStringParameters.Add("q", query);
             param.Headers.Add("GData-Version", "3.0");

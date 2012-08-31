@@ -42,6 +42,7 @@
     <Compile Include="AuthorizationStatus.cs" />
     <Compile Include="Contacts\IContactQueryProvider.cs" />
     <Compile Include="IIdentityProvider.cs" />
+    <Compile Include="ILocalStore.cs" />
     <Compile Include="IPersonalIdentifier.cs" />
     <Compile Include="IProfile.cs" />
     <Compile Include="IProvider.cs" />

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Windows.Input;
 using ArtemisWest.CallMe.Contract;
 using ArtemisWest.CallMe.Google.Authorization;
@@ -46,6 +47,7 @@ namespace ArtemisWest.CallMe.Google
         public AuthorizationStatus Status
         {
             get { return _authorizationModel.Status.First(); }
+            //get { return _authorizationModel.Status.ToTask().Result; }
         }
         public IResourceScope[] AvailableServices
         {
@@ -80,11 +82,7 @@ namespace ArtemisWest.CallMe.Google
                         .Select(_ => _loginView.ViewModel.AuthorizationCode)
                         .TakeUntil(isActiveChanged.Where(_ => !_loginView.IsActive))
                         .Take(1)
-                        .Do(
-                            x => Console.WriteLine("ShowGoogleLogin.OnNext({0})", x),
-                            ex => Console.WriteLine("ShowGoogleLogin.OnError({0})", ex),
-                            () => Console.WriteLine("ShowGoogleLogin.OnCompleted()")
-                            );
+                        .Log("ShowGoogleLogin");
                     return Observable.Using(
                             () => Disposable.Create(() => _regionManager.Regions["WindowRegion"].Deactivate(_loginView)),
                             _ => authorizationCodeChanged)

@@ -100,7 +100,7 @@
     <Compile Include="GoogleProviderDescription.cs" />
     <Compile Include="IWebRequstService.cs" />
     <Compile Include="ObservableExtensions.cs" />
-    <Compile Include="RestRequest.cs" />
+    <Compile Include="HttpRequestParameters.cs" />
     <Compile Include="WebRequstService.cs" />
     <Page Include="Authorization\GoogleLoginView.xaml">
       <SubType>Designer</SubType>

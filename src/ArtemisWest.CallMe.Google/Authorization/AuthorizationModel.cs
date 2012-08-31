@@ -14,6 +14,7 @@ namespace ArtemisWest.CallMe.Google.Authorization
 {
     public sealed class AuthorizationModel : IAuthorizationModel
     {
+        private readonly ILocalStore _localStore;
         private const string AppName = "CallMe.Spike";
         private const string ClientId = "410654176090.apps.googleusercontent.com";
         private const string ClientSecret = "bDkwW8Y2RnUt0JsjbAwYA8cb";
@@ -25,9 +26,10 @@ namespace ArtemisWest.CallMe.Google.Authorization
         private RequestAuthorizationCode _callback;
         private string _authorizationCode;
         private Session _currentSession;
-        
-        public AuthorizationModel(IEnumerable<IResourceScope> availableServices)
+
+        public AuthorizationModel(IEnumerable<IResourceScope> availableServices, ILocalStore localStore)
         {
+            _localStore = localStore;
             _availableServices = availableServices.ToArray();
             _selectedServices = new ObservableCollection<IResourceScope>(_availableServices);
         }
@@ -62,10 +64,25 @@ namespace ArtemisWest.CallMe.Google.Authorization
             }
         }
 
+        private string AuthorizationCode
+        {
+            get
+            {
+                //return _authorizationCode;
+                return _localStore.Get("AuthorizationCode");
+            }
+            set
+            {
+                //_authorizationCode = value;
+                _localStore.Put("AuthorizationCode", value);
+            }
+        }
+
         public IObservable<string> RequestAccessToken()
         {
+            var nextSession = Observable.Defer(() => CreateSession().Do(session => CurrentSession = session));
             return Observable.Return(CurrentSession)
-                .Concat(CreateSession().Do(session => CurrentSession = session))
+                .Concat(nextSession)
                 .Where(session => session != null && !session.HasExpired())
                 .Take(1)
                 .Select(session => session.AccessToken);
@@ -80,10 +97,19 @@ namespace ArtemisWest.CallMe.Google.Authorization
 
         private IObservable<string> GetAuthorizationCode()
         {
-            return Observable.Return(_authorizationCode)
-                .Concat(RequestAuthorizationCode())
-                .Where(authCode => authCode != null)
-                .Take(1);
+            return Observable.Create<string>(
+                o =>
+                {
+                    if (AuthorizationCode != null)
+                    {
+                        o.OnNext(AuthorizationCode);
+                        o.OnCompleted();
+                        return Disposable.Empty;
+                    }
+                    return RequestAuthorizationCode()
+                        .Do(newCode => AuthorizationCode = newCode)
+                        .Subscribe(o);
+                });
         }
 
         private IObservable<string> RequestAuthorizationCode()
