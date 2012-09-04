@@ -69,7 +69,7 @@ namespace ArtemisWest.CallMe.Google
             return request;
         }
 
-        private Uri ConstructUri()
+        public Uri ConstructUri()
         {
             var uriBuilder = new UriBuilder(EndPointUrl);
 

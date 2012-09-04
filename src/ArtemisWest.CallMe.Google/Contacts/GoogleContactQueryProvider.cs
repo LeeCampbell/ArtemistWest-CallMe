@@ -36,13 +36,14 @@ namespace ArtemisWest.CallMe.Google.Contacts
         {
             Console.WriteLine("GCQP.Search({0})", activeProfile);
             return (
-                       from request in _authorizationModel.RequestAccessToken()
+                       from accessToken in _authorizationModel.RequestAccessToken()
                            .Log("GCQPRequestAccessToken")
-                           .Select(token => CreateRequestParams(activeProfile, token))
+                       from request in Observable.Return(CreateRequestParams(activeProfile, accessToken))
+                           //.Select(token => CreateRequestParams(activeProfile, token))
                            .Log("ContactRequestParams")
                        from response in _webRequstService.GetResponse(request)
                        //.Log("ContactResponse")
-                       select Translate(response)
+                       select Translate(response, accessToken)
                    )
                 .Take(1);
         }
@@ -60,7 +61,7 @@ namespace ArtemisWest.CallMe.Google.Contacts
             return param;
         }
 
-        private static IContact Translate(string response)
+        private static IContact Translate(string response, string accessToken)
         {
             var xDoc = XDocument.Parse(response);
             var entryXName = XName.Get("entry", "http://www.w3.org/2005/Atom");
@@ -84,7 +85,13 @@ namespace ArtemisWest.CallMe.Google.Contacts
                 .Select(x => x.Attribute("href"))
                 .Where(att => att != null)
                 //TODO: Add param.QueryStringParameters.Add("access_token", accessToken); to the URI
-                .Select(att => new Uri(att.Value))
+                //.Select(att => new Uri(att.Value))
+                .Select(att =>
+                            {
+                                var hrp = new HttpRequestParameters(att.Value);
+                                hrp.QueryStringParameters.Add("access_token", accessToken);
+                                return hrp.ConstructUri();
+                            })
                 .FirstOrDefault();
 
             //<gd:email rel='http://schemas.google.com/g/2005#home' address='danrowe1978@gmail.com' primary='true'/>
