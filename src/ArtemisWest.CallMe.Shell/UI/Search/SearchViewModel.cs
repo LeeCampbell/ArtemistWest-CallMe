@@ -1,6 +1,6 @@
 ﻿using Microsoft.Practices.Prism.Commands;
 
-namespace ArtemisWest.CallMe.Shell.Search
+namespace ArtemisWest.CallMe.Shell.UI.Search
 {
     public sealed class SearchViewModel
     {

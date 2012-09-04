@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Net;
 
@@ -8,9 +9,9 @@ namespace ArtemisWest.CallMe.Google
     public sealed class HttpRequestParameters
     {
         private readonly string _endPointUrl;
-        private readonly NameValueCollection _queryStringParameters = new NameValueCollection(); 
-        private readonly NameValueCollection _postParameters = new NameValueCollection(); 
-        private readonly NameValueCollection _headers= new NameValueCollection(); 
+        private readonly NameValueCollection _queryStringParameters = new NameValueCollection();
+        private readonly NameValueCollection _postParameters = new NameValueCollection();
+        private readonly NameValueCollection _headers = new NameValueCollection();
 
         public HttpRequestParameters(string endPointUrl)
         {
@@ -37,17 +38,33 @@ namespace ArtemisWest.CallMe.Google
             get { return _headers; }
         }
 
-
         public HttpWebRequest CreateRequest()
         {
             var queryUri = ConstructUri();
-
             var request = (HttpWebRequest)WebRequest.Create(queryUri);
-
             foreach (var key in Headers.AllKeys)
             {
                 request.Headers.Add(key, Headers[key]);
             }
+
+            if (PostParameters.Count > 0)
+            {
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+
+                var postArguments = System.Web.HttpUtility.ParseQueryString(string.Empty);
+                foreach (var key in PostParameters.AllKeys)
+                {
+                    postArguments[key] = PostParameters[key];
+                }
+                using (var requestStream = request.GetRequestStream())
+                using (var writer = new StreamWriter(requestStream))
+                {
+                    writer.Write(postArguments.ToString());
+                }
+            }
+
+            Console.WriteLine("CreateRequest returning {0}", this);
 
             return request;
         }
@@ -70,12 +87,15 @@ namespace ArtemisWest.CallMe.Google
 
         public override string ToString()
         {
-            var headers = string.Join(
-                ", ",
-                Headers.AllKeys.Select(k => string.Format("[{0}:{1}]", k, Headers[k])));
+            var headers = ToString(Headers);
+            var post =ToString(PostParameters);
 
-            return string.Format("{0} HEADERS:{1}", ConstructUri(), headers);
+            return string.Format("{0} HEADERS:{1} POST:{2}", ConstructUri(), headers, post);
         }
 
+        private static string ToString(NameValueCollection nvc)
+        {
+            return string.Join(", ", nvc.AllKeys.Select(k => string.Format("[{0}:{1}]", k, nvc[k])));
+        }
     }
 }

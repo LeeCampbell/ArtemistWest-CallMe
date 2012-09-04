@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using System.Windows.Input;
 using ArtemisWest.CallMe.Contract;
 using ArtemisWest.CallMe.Google.Authorization;

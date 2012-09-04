@@ -115,12 +115,12 @@
       <DependentUpon>ProviderSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProviderSettings\ProviderSettingsViewModel.cs" />
-    <Compile Include="Search\ISearchModel.cs" />
-    <Compile Include="Search\SearchModel.cs" />
-    <Compile Include="Search\SearchView.xaml.cs">
+    <Compile Include="UI\Search\ISearchModel.cs" />
+    <Compile Include="UI\Search\SearchModel.cs" />
+    <Compile Include="UI\Search\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Search\SearchViewModel.cs" />
+    <Compile Include="UI\Search\SearchViewModel.cs" />
     <Compile Include="UI\Contact\ContactSearchResults.cs" />
     <Compile Include="UI\Contact\ContactSearchResultsView.xaml.cs">
       <DependentUpon>ContactSearchResultsView.xaml</DependentUpon>
@@ -146,7 +146,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Search\SearchView.xaml">
+    <Page Include="UI\Search\SearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

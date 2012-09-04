@@ -40,7 +40,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorizationStatus.cs" />
+    <Compile Include="Contacts\Contact.cs" />
+    <Compile Include="Contacts\ContactAssociation.cs" />
+    <Compile Include="Contacts\IContact.cs" />
+    <Compile Include="Contacts\IContactAssociation.cs" />
     <Compile Include="Contacts\IContactQueryProvider.cs" />
+    <Compile Include="Contacts\OrganizationAssociations.cs" />
+    <Compile Include="Contacts\RelationshipAssociations.cs" />
     <Compile Include="IIdentityProvider.cs" />
     <Compile Include="ILocalStore.cs" />
     <Compile Include="IPersonalIdentifier.cs" />

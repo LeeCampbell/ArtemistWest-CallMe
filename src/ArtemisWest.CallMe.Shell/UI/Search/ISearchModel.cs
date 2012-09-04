@@ -1,6 +1,6 @@
 using System;
 
-namespace ArtemisWest.CallMe.Shell.Search
+namespace ArtemisWest.CallMe.Shell.UI.Search
 {
     public interface ISearchModel
     {

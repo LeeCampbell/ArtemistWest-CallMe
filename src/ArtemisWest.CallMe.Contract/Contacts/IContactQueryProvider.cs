@@ -4,6 +4,6 @@ namespace ArtemisWest.CallMe.Contract.Contacts
 {
     public interface IContactQueryProvider
     {
-        IObservable<string> Search(Contract.IProfile activeProfile);
+        IObservable<IContact> Search(Contract.IProfile activeProfile);
     }
 }

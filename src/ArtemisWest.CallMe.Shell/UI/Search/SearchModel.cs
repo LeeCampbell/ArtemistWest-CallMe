@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Microsoft.Practices.Prism.Logging;
 
-namespace ArtemisWest.CallMe.Shell.Search
+namespace ArtemisWest.CallMe.Shell.UI.Search
 {
     public class SearchModel : ISearchModel
     {

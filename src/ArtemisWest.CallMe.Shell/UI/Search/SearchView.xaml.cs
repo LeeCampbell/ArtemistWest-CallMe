@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ArtemisWest.CallMe.Shell.Search
+namespace ArtemisWest.CallMe.Shell.UI.Search
 {
     /// <summary>
     /// Interaction logic for SearchView.xaml

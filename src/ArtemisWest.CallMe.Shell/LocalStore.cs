@@ -14,12 +14,10 @@ namespace ArtemisWest.CallMe.Shell
 
         public LocalStore()
         {
-            //First get the 'user-scoped' storage information location reference in the assembly
             var isolatedStorage = IsolatedStorageFile.GetUserStoreForAssembly();
-            //create a stream reader object to read content from the created isolated location
             using (var srReader = new StreamReader(new IsolatedStorageFileStream(FileKey, FileMode.OpenOrCreate, isolatedStorage)))
             {
-                var payload = srReader.ReadToEnd();
+                string payload = srReader.ReadToEnd();
                 _data = JsonConvert.DeserializeObject<Dictionary<string, string>>(payload)
                     ?? new Dictionary<string, string>();
                 srReader.Close();
@@ -39,6 +37,12 @@ namespace ArtemisWest.CallMe.Shell
             SaveData();
         }
 
+        public void Remove(string key)
+        {
+            _data.Remove(key);
+            SaveData();
+        }
+
         private void SaveData()
         {
             var isolatedStorage = IsolatedStorageFile.GetUserStoreForAssembly();
@@ -51,11 +55,6 @@ namespace ArtemisWest.CallMe.Shell
                 srWriter.Flush();
                 srWriter.Close();
             }
-        }
-
-        private void LoadData()
-        {
-            
         }
     }
 }

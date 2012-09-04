@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ArtemisWest.CallMe.Shell.Search.SearchView"
+﻿<UserControl x:Class="ArtemisWest.CallMe.Shell.UI.Search.SearchView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              FocusManager.FocusedElement="{Binding ElementName=SearchInput}">

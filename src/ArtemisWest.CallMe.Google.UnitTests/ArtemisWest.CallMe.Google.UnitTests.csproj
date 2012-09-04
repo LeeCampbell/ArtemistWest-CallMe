@@ -64,8 +64,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="GoogleIdentityProverFixture.cs" />
+    <Compile Include="GoogleContactQueryProviderFixture.cs" />
+    <Compile Include="GoogleIdentityProviderFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StubAuthModel.cs" />
+    <Compile Include="StubWebrequestService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArtemisWest.CallMe.Contract\ArtemisWest.CallMe.Contract.csproj">
@@ -84,6 +87,7 @@
   <ItemGroup>
     <Content Include="ExampleFullContactQueryResponse.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <Choose>
