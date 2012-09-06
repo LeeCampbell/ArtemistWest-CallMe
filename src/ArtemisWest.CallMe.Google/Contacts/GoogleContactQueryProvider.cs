@@ -84,8 +84,6 @@ namespace ArtemisWest.CallMe.Google.Contacts
                             && x.Attribute("href") != null)
                 .Select(x => x.Attribute("href"))
                 .Where(att => att != null)
-                //TODO: Add param.QueryStringParameters.Add("access_token", accessToken); to the URI
-                //.Select(att => new Uri(att.Value))
                 .Select(att =>
                             {
                                 var hrp = new HttpRequestParameters(att.Value);

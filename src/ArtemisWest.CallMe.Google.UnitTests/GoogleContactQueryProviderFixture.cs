@@ -20,7 +20,7 @@ namespace ArtemisWest.CallMe.Google.UnitTests
             var auth = new StubAuthModel();
             var web = new StubWebrequestService();
             var sut = new GoogleContactQueryProvider(auth, web);
-            var activeProfile = new Profile(new[] {new PersonalIdentifier(null, null, "dummy")});
+            var activeProfile = new Profile(new[] { new PersonalIdentifier(null, null, "dummy") });
 
             web.Response = File.ReadAllText(@"ExampleFullContactQueryResponse.xml");
             _actual = sut.Search(activeProfile).First();
@@ -47,7 +47,11 @@ namespace ArtemisWest.CallMe.Google.UnitTests
         [TestMethod]
         public void Should_return_ImageLink_from_response_xml()
         {
-            Assert.AreEqual(new Uri(@"https://www.google.com/m8/feeds/photos/media/lee.ryan.campbell%40gmail.com/2b"), _actual.Image);
+            var expected = new UriBuilder(@"https://www.google.com/m8/feeds/photos/media/lee.ryan.campbell%40gmail.com/2b")
+                               {
+                                   Query = @"access_token=SomeToken"
+                               };
+            Assert.AreEqual(expected.Uri, _actual.Image);
         }
 
         [TestMethod]
