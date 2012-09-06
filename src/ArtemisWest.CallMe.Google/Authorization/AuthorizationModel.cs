@@ -33,6 +33,10 @@ namespace ArtemisWest.CallMe.Google.Authorization
             _selectedServices = new ObservableCollection<IResourceScope>(_availableServices);
 
             _currentSession = LoadSession();
+            if (_currentSession != null)
+            {
+                _status.OnNext(AuthorizationStatus.Authorized);
+            }
         }
 
         public IObservable<AuthorizationStatus> Status

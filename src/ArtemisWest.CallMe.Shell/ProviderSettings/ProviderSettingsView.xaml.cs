@@ -1,6 +1,4 @@
-﻿using System.Windows.Controls;
-
-namespace ArtemisWest.CallMe.Shell.ProviderSettings
+﻿namespace ArtemisWest.CallMe.Shell.ProviderSettings
 {
     public partial class ProviderSettingsView
     {
@@ -12,7 +10,7 @@ namespace ArtemisWest.CallMe.Shell.ProviderSettings
         public ProviderSettingsView(ProviderSettingsViewModel viewModel)
         {
             DataContext = viewModel;
-            InitializeComponent();
+            InitializeComponent();  
         }
     }
 }

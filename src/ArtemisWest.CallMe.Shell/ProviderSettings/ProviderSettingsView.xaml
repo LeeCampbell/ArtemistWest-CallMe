@@ -3,42 +3,54 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ArtemisWest.CallMe.Shell">
 
-    <ItemsControl ItemsSource="{Binding Providers}">
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal"/>
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <DataTemplate.Resources>
-                    <local:GrayScaleConverter x:Key="grayScaleConverter"/>
-                </DataTemplate.Resources>
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="ProviderAuthButton" 
+    <Border BorderBrush="Black" BorderThickness="0,0,0,2" Background="AntiqueWhite">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="Height" Value="3"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Height" Value="70"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <ItemsControl ItemsSource="{Binding Providers}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <DataTemplate.Resources>
+                        <local:GrayScaleConverter x:Key="grayScaleConverter"/>
+                    </DataTemplate.Resources>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="ProviderAuthButton" 
                         Command="{Binding AuthorizeCommand}" 
                         ToolTip="{Binding Name}" Margin="5">
-                        <Image Height="64" Stretch="Uniform" StretchDirection="Both">
-                            <Image.Style>
-                                <Style TargetType="Image">
-                                    <Setter Property="Source" Value="{Binding Image}"/>
-                                    <Style.Triggers>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Button}, Path=IsEnabled}" Value="True"/>
-                                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Button}, Path=IsMouseOver}" Value="False"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <MultiDataTrigger.Setters>
-                                                <Setter Property="Source" Value="{Binding Image, Converter={StaticResource grayScaleConverter}}"/>
-                                            </MultiDataTrigger.Setters>
-                                        </MultiDataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-                    </Button>
-                </StackPanel>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+                            <Image Height="64" Stretch="Uniform" StretchDirection="Both">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Setter Property="Source" Value="{Binding Image}"/>
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Button}, Path=IsEnabled}" Value="True"/>
+                                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Button}, Path=IsMouseOver}" Value="False"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <MultiDataTrigger.Setters>
+                                                    <Setter Property="Source" Value="{Binding Image, Converter={StaticResource grayScaleConverter}}"/>
+                                                </MultiDataTrigger.Setters>
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Border>
 </UserControl>
