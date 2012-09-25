@@ -11,7 +11,7 @@ using Microsoft.Practices.Prism.Regions;
 
 namespace ArtemisWest.CallMe.Google
 {
-    public class GoogleProvider : IProvider, INotifyPropertyChanged
+    public class GoogleProvider : IProvider
     {
         private readonly IAuthorizationModel _authorizationModel;
         private readonly IRegionManager _regionManager;

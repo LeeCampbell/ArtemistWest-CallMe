@@ -17,6 +17,7 @@ namespace ArtemisWest.CallMe.Shell.UI.Search
         public SearchView(SearchViewModel viewModel)
         {
             viewModel.SearchText = "Dan Rowe";  //HACK:
+            viewModel.SearchText = "+33 6 4306 7658";  //HACK:
             DataContext = _viewModel = viewModel;
             InitializeComponent();
         }

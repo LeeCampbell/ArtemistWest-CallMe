@@ -140,6 +140,8 @@ namespace ArtemisWest.CallMe.Google.Authorization
             return Observable.Create<string>(
                 o =>
                 {
+                    
+
                     if (_callback == null)
                         throw new InvalidOperationException("No callback has been registered via the RegisterAuthorizationCallback method");
                     var uri = BuildAuthorizationUri();
@@ -262,6 +264,22 @@ namespace ArtemisWest.CallMe.Google.Authorization
             requestParams.PostParameters.Add("refresh_token", refreshToken);
             requestParams.PostParameters.Add("grant_type", "refresh_token");
             return requestParams.CreateRequest();
+        }
+    }
+
+    public sealed class OfflineAuthorizationModel: IAuthorizationModel
+    {
+        private readonly BehaviorSubject<AuthorizationStatus> _status = new BehaviorSubject<AuthorizationStatus>(AuthorizationStatus.Authorized); 
+        public IObservable<AuthorizationStatus> Status { get { return _status; } }
+        public IResourceScope[] AvailableServices { get; private set; }
+        public ObservableCollection<IResourceScope> SelectedServices { get; private set; }
+        public void RegisterAuthorizationCallback(RequestAuthorizationCode callback)
+        {
+        }
+
+        public IObservable<string> RequestAccessToken()
+        {
+            return Observable.Return("OFFLINE");
         }
     }
 }

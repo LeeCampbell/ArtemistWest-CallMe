@@ -1,4 +1,3 @@
-using ArtemisWest.CallMe.Shell.UI.Search;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.Unity;
@@ -18,17 +17,13 @@ namespace ArtemisWest.CallMe.Shell
 
         public void Initialize()
         {
+            _container.RegisterType<ISchedulerProvider, SchedulerProvider>(new ContainerControlledLifetimeManager());
             _container.RegisterType<Contract.ILocalStore, LocalStore>(new ContainerControlledLifetimeManager());
-            _container.RegisterType<ISearchModel, SearchModel>(new ContainerControlledLifetimeManager());
+            _container.RegisterType<Services.IActivatedIdentityListener, Services.BluetoothActivatedIdentityListener>(new ContainerControlledLifetimeManager());
+            _container.RegisterType<Services.IActiveProfileService, Services.ActiveProfileService>(new ContainerControlledLifetimeManager());
             
-            //var searchModel = _container.Resolve<Search.SearchModel>();
-            //_container.RegisterInstance<Search.ISearchModel>(searchModel);
-
             var settingsView = _container.Resolve<ProviderSettings.ProviderSettingsView>();
             _regionManager.AddToRegion("ProviderSettingsRegion", settingsView);
-
-            var searchView = _container.Resolve<SearchView>();
-            _regionManager.AddToRegion("SearchRegion", searchView);
 
             var contactView = _container.Resolve<UI.Contact.ContactSearchResultsView>();
             _regionManager.AddToRegion("ContactRegion", contactView);

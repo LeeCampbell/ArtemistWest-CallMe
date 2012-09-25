@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 
 namespace ArtemisWest.CallMe.Google
 {
+    //TODO: Collapse into a Core/Infrastructure assembly.
     public static class ObservableExtensions
     {
         public static IObservable<T> Log<T>(this IObservable<T> source, string name)

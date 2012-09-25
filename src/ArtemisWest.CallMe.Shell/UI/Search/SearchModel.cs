@@ -19,7 +19,7 @@ namespace ArtemisWest.CallMe.Shell.UI.Search
             _identityProviders = identityProviders.ToArray();
 
             var profiles = from query in _identityQueries
-                                select _identityProviders.Select(ip => ip.FindProfile(query));
+                                select _identityProviders.Select(ip => ip.FindProfile(new[]{query}));
 
             //Merge the results from each of the identityProviders into a single sequence. 
             //Cancel any running queries if another request comes in (using the Switch Statement)
@@ -27,7 +27,7 @@ namespace ArtemisWest.CallMe.Shell.UI.Search
                 .Select(queryResult => queryResult.Merge().ToList())
                 .Switch()
                 .Select(MergeProfiles)
-                .Log("IdentityActivated");
+                .Log(logger, "IdentityActivated");
 
 
             var msg = string.Format("SearchModel constructed with {0} identityProviders ({1})",
@@ -44,7 +44,7 @@ namespace ArtemisWest.CallMe.Shell.UI.Search
         public void Search(string query)
         {
             //First get the Contact's identifiers.
-            //e.g. if 0212543824 is recieved, Twitter want know what to do. 1st, push that to the ContactProviders/IdentityProviders?
+            //e.g. if 0212543824 is received, Twitter want know what to do. 1st, push that to the ContactProviders/IdentityProviders?
             // With these results (wait for all to complete?) we then broadcast those identifiers out to the the providers
             _identityQueries.OnNext(query);
         }

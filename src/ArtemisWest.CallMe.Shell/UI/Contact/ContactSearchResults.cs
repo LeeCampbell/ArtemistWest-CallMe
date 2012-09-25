@@ -1,33 +1,34 @@
-﻿using System;
+﻿using ArtemisWest.CallMe.Contract.Contacts;
+using Microsoft.Practices.Prism.Logging;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
-using ArtemisWest.CallMe.Contract.Contacts;
 
 namespace ArtemisWest.CallMe.Shell.UI.Contact
 {
     public class ContactSearchResults
     {
-        private readonly Search.ISearchModel _search;
         private readonly IEnumerable<IContactQueryProvider> _queryProviders;
+        private readonly ILoggerFacade _logger;
+        private readonly ISchedulerProvider _schedulerProvider;
         private readonly ObservableCollection<IContact> _contacts = new ObservableCollection<IContact>();
 
-        public ContactSearchResults(Search.ISearchModel search, IEnumerable<IContactQueryProvider> queryProviders)
+        public ContactSearchResults(Services.IActiveProfileService activeProfileService, IEnumerable<IContactQueryProvider> queryProviders, ILoggerFacade logger, ISchedulerProvider schedulerProvider)
         {
-            _search = search;
-            _queryProviders = queryProviders;
+            _queryProviders = queryProviders.ToArray();
+            _logger = logger;
+            _schedulerProvider = schedulerProvider;
 
-            _search.IdentityActivated
-                .Log("_search.IdentityActivated")
+            activeProfileService.ProfileActivated
+                .Log(_logger, "activeProfileService.ProfileActivated")
                 .SelectMany(identity =>
                             _queryProviders.Select(p => p.Search(identity))
-                                .Merge())
+                                           .Merge())
                 .Select(contact => contact)
-                .Subscribe(c =>
-                               {
-                                   _contacts.Add(c);
-                               });
+                .ObserveOn(_schedulerProvider.Dispatcher)
+                .Subscribe(c => _contacts.Add(c));
         }
 
         //This is where the Model goes. Potentially just 

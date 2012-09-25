@@ -9,6 +9,6 @@
                 Command="{Binding SearchCommand}"
                 Content="Search"/>
         <TextBox x:Name="SearchInput"
-                 Text="{Binding SearchText}"/>
+                 Text="{Binding SearchText, Mode=TwoWay}"/>
     </DockPanel>
 </UserControl>

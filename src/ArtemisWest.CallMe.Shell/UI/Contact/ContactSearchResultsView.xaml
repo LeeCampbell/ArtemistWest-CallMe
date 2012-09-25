@@ -9,12 +9,47 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <TextBlock Text="{Binding Title}"/>
-                        <Image Source="{Binding Image}"/>
-                        <ItemsControl ItemsSource="{Binding EmailAddresses}" DisplayMemberPath="Name"/>
-                        <ItemsControl ItemsSource="{Binding PhoneNumbers}" DisplayMemberPath="Name"/>
-                        <ItemsControl ItemsSource="{Binding Relationships}" DisplayMemberPath="Name"/>
-                        <ItemsControl ItemsSource="{Binding Organizations}" DisplayMemberPath="Name"/>
+                        <!--To span image and Contacts -->
+                        <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextStyle}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Source="{Binding Image}" Margin="10,0,10,10"/>
+                            <!--To merge the Phone and email list together and show only as many as the height of the image will show-->
+                            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+                                    <ItemsControl ItemsSource="{Binding EmailAddresses}" DisplayMemberPath="Name"/>
+                                    <ItemsControl ItemsSource="{Binding PhoneNumbers}" DisplayMemberPath="Name"/>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                        
+                        <!--Show BDay if nearby. Show relevant relatives if there is a anniversary near by-->
+                        <!--<ItemsControl ItemsSource="{Binding Relationships}" DisplayMemberPath="Name"/>-->
+                        <ItemsControl ItemsSource="{Binding Relationships}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="{Binding Association}"/>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <!-- Show this inline with the Title-->
+                        <!--<ItemsControl ItemsSource="{Binding Organizations}" DisplayMemberPath="Name"/>-->
+                        <ItemsControl ItemsSource="{Binding Organizations}" >
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="{Binding Association}"/>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

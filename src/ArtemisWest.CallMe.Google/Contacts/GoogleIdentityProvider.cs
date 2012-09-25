@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Xml;
@@ -19,11 +20,11 @@ namespace ArtemisWest.CallMe.Google.Contacts
             _authorizationModel = authorizationModel;
             _webRequstService = webRequstService;
         }
-
-        public IObservable<IProfile> FindProfile(string query)
+        public IObservable<IProfile> FindProfile(IList<string> identityKeys)
         {
             return (
-                    from request in _authorizationModel.RequestAccessToken().Select(token=>CreateRequestParams(query,token))
+                    from request in _authorizationModel.RequestAccessToken()
+                            .Select(token => CreateRequestParams(identityKeys, token))
                             .Log("IdentityRequestParams")
                     from response in _webRequstService.GetResponse(request)
                             .Log("IdentityResponse")
@@ -32,15 +33,18 @@ namespace ArtemisWest.CallMe.Google.Contacts
                     .Take(1);
         }
 
-        private HttpRequestParameters CreateRequestParams(string query, string accessToken)
+        private HttpRequestParameters CreateRequestParams(IList<string> identityKeys, string accessToken)
         {
+            //var query = string.Join(" ", identityKeys);
+            //HACK:
+            var query = identityKeys.First();
             var param = new HttpRequestParameters(@"https://www.google.com/m8/feeds/contacts/default/full");
             param.QueryStringParameters.Add("access_token", accessToken);
             param.QueryStringParameters.Add("q", query);
             param.Headers.Add("GData-Version", "3.0");
             return param;
         }
-        
+
         private static IProfile Translate(string response)
         {
             var xDoc = XDocument.Parse(response);
@@ -54,12 +58,35 @@ namespace ArtemisWest.CallMe.Google.Contacts
 
             var entryXName = XName.Get("entry", "http://www.w3.org/2005/Atom");
 
+            //TODO: Handle an empty result set - LC
             var emails = from email in xDoc.Root.Element(entryXName).XPathSelectElements("gd:email", ns)
                          select new PersonalIdentifier(GoogleProviderDescription.Instance, "email", email.Attribute("address").Value);
             var phonenumbers = from phone in xDoc.Root.Element(entryXName).XPathSelectElements("gd:phoneNumber", ns)
                                select new PersonalIdentifier(GoogleProviderDescription.Instance, "phone", phone.Value);
 
             return new Profile(emails.Concat(phonenumbers));
+        }
+
+        
+    }
+    public class OfflineIdentityProvider : IIdentityProvider
+    {
+        private readonly IProviderDescription _providerDescription;
+
+        public OfflineIdentityProvider(IProviderDescription providerDescription)
+        {
+            _providerDescription = providerDescription;
+        }
+
+        public IObservable<IProfile> FindProfile(IList<string> _)
+        {
+            return Observable.Return(new Profile(new IPersonalIdentifier[]
+                                                     {
+                                                         new PersonalIdentifier(_providerDescription, "email", "lee@home.com"),
+                                                         new PersonalIdentifier(_providerDescription, "email", "lee@work.com"),
+                                                         new PersonalIdentifier(_providerDescription, "phone", "+64212543824"),
+                                                         new PersonalIdentifier(_providerDescription, "email", "@LeeCampbell"),
+                                                     }));
         }
     }
 }

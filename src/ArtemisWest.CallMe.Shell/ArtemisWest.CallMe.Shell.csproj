@@ -35,7 +35,23 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Offline|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Offline\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification">
+      <HintPath>..\..\packages\Hardcodet.Wpf.TaskbarNotification.1.0.4.0\lib\net40\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+    </Reference>
+    <Reference Include="InTheHand.Net.Personal">
+      <HintPath>..\..\packages\32feet.NET.3.5.0.0\lib\net\InTheHand.Net.Personal.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
@@ -81,6 +97,10 @@
     <Reference Include="System.Reactive.PlatformServices">
       <HintPath>..\..\packages\Rx-PlatformServices.2.0.20823\lib\Net45\System.Reactive.PlatformServices.dll</HintPath>
     </Reference>
+    <Reference Include="System.Reactive.Windows.Threading, Version=2.0.20814.0, Culture=neutral, PublicKeyToken=f300afd708cefcd3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Rx-WPF.2.0.20814\lib\Net45\System.Reactive.Windows.Threading.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Prism.4.1.0.0\lib\NET40\System.Windows.Interactivity.dll</HintPath>
@@ -115,12 +135,10 @@
       <DependentUpon>ProviderSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ProviderSettings\ProviderSettingsViewModel.cs" />
-    <Compile Include="UI\Search\ISearchModel.cs" />
-    <Compile Include="UI\Search\SearchModel.cs" />
-    <Compile Include="UI\Search\SearchView.xaml.cs">
-      <DependentUpon>SearchView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Search\SearchViewModel.cs" />
+    <Compile Include="Services\ActiveProfileService.cs" />
+    <Compile Include="Services\BluetoothActivatedIdentityListener.cs" />
+    <Compile Include="Services\IActivatedIdentityListener.cs" />
+    <Compile Include="Services\IActiveProfileService.cs" />
     <Compile Include="UI\Contact\ContactSearchResults.cs" />
     <Compile Include="UI\Contact\ContactSearchResultsView.xaml.cs">
       <DependentUpon>ContactSearchResultsView.xaml</DependentUpon>
@@ -143,10 +161,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="ProviderSettings\ProviderSettingsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Search\SearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -187,6 +201,10 @@
     <ProjectReference Include="..\ArtemisWest.CallMe.Contract\ArtemisWest.CallMe.Contract.csproj">
       <Project>{dee079b9-3a51-4066-ada5-c06271ecebd3}</Project>
       <Name>ArtemisWest.CallMe.Contract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArtemisWest.CallMe.Core\ArtemisWest.CallMe.Core.csproj">
+      <Project>{23C9BA8F-5EAA-4490-98AB-D250E5537A8A}</Project>
+      <Name>ArtemisWest.CallMe.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

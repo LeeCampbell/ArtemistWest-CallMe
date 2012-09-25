@@ -16,7 +16,7 @@ namespace ArtemisWest.CallMe.Google.UnitTests
             var sut = new GoogleIdentityProvider(auth, web);
 
             web.Response =File.ReadAllText(@"ExampleFullContactQueryResponse.xml");
-            var profile = sut.FindProfile("").First();
+            var profile = sut.FindProfile(new []{""}).First();
 
             Assert.AreEqual(3, profile.Identifiers.Count);
             Assert.AreEqual("danrowe1978@gmail.com", profile.Identifiers[0].Value);

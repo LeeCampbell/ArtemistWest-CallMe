@@ -146,4 +146,24 @@ namespace ArtemisWest.CallMe.Google.Contacts
             return head + tail;
         }
     }
+
+    #if OFFLINE
+    public sealed class OfflineContactQueryProvider : IContactQueryProvider
+    {
+        public IObservable<IContact> Search(IProfile activeProfile)
+        {
+            return Observable.Return(new Contact
+                                         {
+                                             FullName = "Lee Campbell",
+                                             DateOfBirth = new DateTime(1979, 12, 27),
+                                             Title = "Lee Campbell",
+                                             EmailAddresses =
+                                                 {
+                                                     new ContactAssociation("home", "lee.ryan.campbell@gmail.com"),
+                                                     new ContactAssociation("work", "lee.campbell@rbccm.com")
+                                                 }
+                                         });
+        }
+    }
+    #endif 
 }
