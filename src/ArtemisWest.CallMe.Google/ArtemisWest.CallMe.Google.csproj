@@ -108,7 +108,6 @@
     <Compile Include="Contacts\GoogleContactQueryProvider.cs" />
     <Compile Include="GoogleProviderDescription.cs" />
     <Compile Include="IWebRequstService.cs" />
-    <Compile Include="ObservableExtensions.cs" />
     <Compile Include="HttpRequestParameters.cs" />
     <Compile Include="WebRequstService.cs" />
     <Page Include="Authorization\GoogleLoginView.xaml">
@@ -166,6 +165,10 @@
     <ProjectReference Include="..\ArtemisWest.CallMe.Contract\ArtemisWest.CallMe.Contract.csproj">
       <Project>{dee079b9-3a51-4066-ada5-c06271ecebd3}</Project>
       <Name>ArtemisWest.CallMe.Contract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArtemisWest.CallMe.Core\ArtemisWest.CallMe.Core.csproj">
+      <Project>{23C9BA8F-5EAA-4490-98AB-D250E5537A8A}</Project>
+      <Name>ArtemisWest.CallMe.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

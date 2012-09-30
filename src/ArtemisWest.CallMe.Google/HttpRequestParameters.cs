@@ -64,8 +64,6 @@ namespace ArtemisWest.CallMe.Google
                 }
             }
 
-            Console.WriteLine("CreateRequest returning {0}", this);
-
             return request;
         }
 
@@ -88,7 +86,7 @@ namespace ArtemisWest.CallMe.Google
         public override string ToString()
         {
             var headers = ToString(Headers);
-            var post =ToString(PostParameters);
+            var post = ToString(PostParameters);
 
             return string.Format("{0} HEADERS:{1} POST:{2}", ConstructUri(), headers, post);
         }

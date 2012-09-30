@@ -17,14 +17,16 @@ namespace ArtemisWest.CallMe.Google
         private readonly IRegionManager _regionManager;
         private readonly IGoogleLoginView _loginView;
         private readonly DelegateCommand _authorizeCommand;
+        private readonly ILogger _logger;
 
         //TODO: Inject a Func<IGoogleLoginView> instead
-        public GoogleProvider(IAuthorizationModel authorizationModel, IRegionManager regionManager, IGoogleLoginView loginView)
+        public GoogleProvider(IAuthorizationModel authorizationModel, IRegionManager regionManager, IGoogleLoginView loginView, ILoggerFactory loggerFactory)
         {
-            Console.WriteLine("GoogleProvider()");
             _authorizationModel = authorizationModel;
             _regionManager = regionManager;
             _loginView = loginView;
+            _logger = loggerFactory.GetLogger();
+            _logger.Debug("GoogleProvider()");
             _regionManager.Regions["WindowRegion"].Add(_loginView);
             _authorizationModel.RegisterAuthorizationCallback(ShowGoogleLogin);
             _authorizeCommand = new DelegateCommand(RequestAuthorization, () => !Status.IsAuthorized && !Status.IsProcessing);
@@ -81,7 +83,7 @@ namespace ArtemisWest.CallMe.Google
                         .Select(_ => _loginView.ViewModel.AuthorizationCode)
                         .TakeUntil(isActiveChanged.Where(_ => !_loginView.IsActive))
                         .Take(1)
-                        .Log("ShowGoogleLogin");
+                        .Log(_logger, "ShowGoogleLogin");
                     return Observable.Using(
                             () => Disposable.Create(() => _regionManager.Regions["WindowRegion"].Deactivate(_loginView)),
                             _ => authorizationCodeChanged)

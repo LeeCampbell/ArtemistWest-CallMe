@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading;
+using System.Windows;
 using ArtemisWest.CallMe.Shell.UnityExtensions;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.UnityExtensions;
@@ -10,10 +11,20 @@ namespace ArtemisWest.CallMe.Shell
 {
     public class Bootstrapper : UnityBootstrapper
     {
-        protected override Microsoft.Practices.Prism.Logging.ILoggerFacade CreateLogger()
+        private readonly LoggerFactory _loggerFactory;
+
+        public Bootstrapper()
         {
-            return base.CreateLogger();
-            //return new Log4NetFacade();   //Needs to be configured
+            Thread.CurrentThread.Name = "UI";
+            _loggerFactory = new LoggerFactory();
+            var logger = _loggerFactory.GetLogger();
+            logger.Info("Starting application");
+        }
+
+        protected override Microsoft.Practices.Prism.Logging.ILoggerFacade CreateLogger()
+        {           
+            var logger = _loggerFactory.GetLogger();
+            return (Microsoft.Practices.Prism.Logging.ILoggerFacade)logger;
         }
 
         protected override IModuleCatalog CreateModuleCatalog()
@@ -40,6 +51,7 @@ namespace ArtemisWest.CallMe.Shell
         {
             base.ConfigureContainer();
             Container.AddNewExtension<GenericSupportExtension>();
+            Container.RegisterInstance<ILoggerFactory>(_loggerFactory);
         }
 
         protected override void ConfigureServiceLocator()

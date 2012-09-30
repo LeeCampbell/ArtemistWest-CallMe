@@ -13,7 +13,8 @@ namespace ArtemisWest.CallMe.Google.UnitTests
         {
             var auth = new StubAuthModel();
             var web = new StubWebrequestService();
-            var sut = new GoogleIdentityProvider(auth, web);
+            var logFactory = new StubLoggerFactory();
+            var sut = new GoogleIdentityProvider(auth, web, logFactory);
 
             web.Response =File.ReadAllText(@"ExampleFullContactQueryResponse.xml");
             var profile = sut.FindProfile(new []{""}).First();

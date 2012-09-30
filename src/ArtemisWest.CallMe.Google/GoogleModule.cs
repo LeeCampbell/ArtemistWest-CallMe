@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Practices.Prism.Modularity;
+﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 
 namespace ArtemisWest.CallMe.Google
@@ -7,9 +6,12 @@ namespace ArtemisWest.CallMe.Google
     [Module(ModuleName = "GoogleModule")]
     public class GoogleModule : IModule
     {
-        public GoogleModule(IUnityContainer container)
+        private readonly ILogger _logger;
+
+        public GoogleModule(IUnityContainer container, ILoggerFactory loggerFactory)
         {
-            Console.WriteLine("GoogleModule()");
+            _logger = loggerFactory.GetLogger();
+            _logger.Debug("GoogleModule.ctor()");
 
             container.RegisterType<Contract.IProvider, GoogleProvider>(new ContainerControlledLifetimeManager());
             container.RegisterType<Contract.IIdentityProvider, Contacts.GoogleIdentityProvider>(new ContainerControlledLifetimeManager());
@@ -27,8 +29,6 @@ namespace ArtemisWest.CallMe.Google
             container.RegisterType<IWebRequstService, WebRequstService>(new ContainerControlledLifetimeManager());
             container.RegisterType<Contract.Contacts.IContactQueryProvider, Contacts.GoogleContactQueryProvider>(new ContainerControlledLifetimeManager());
 #endif
-
-
         }
 
         public void Initialize()
@@ -39,7 +39,8 @@ namespace ArtemisWest.CallMe.Google
 
             //When making a service request, it should be passed via the serivce/repo that can communicate to thte Auth model that Auth has lapsed. 
             //  It should then disable the Provider and it's child services
-            Console.WriteLine("GoogleModule.Initialize()");
+            _logger.Debug("GoogleModule.Initialize()");
+
         }
     }
 }

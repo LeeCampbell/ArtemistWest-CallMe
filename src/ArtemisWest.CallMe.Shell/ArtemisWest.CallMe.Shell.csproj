@@ -125,7 +125,7 @@
     <Compile Include="GrayScaleConverter.cs" />
     <Compile Include="HostModule.cs" />
     <Compile Include="LocalStore.cs" />
-    <Compile Include="ObservableExtensions.cs" />
+    <Compile Include="LoggerFactory.cs" />
     <Compile Include="PrismExtensions\RegionPopupBehaviors.cs" />
     <Compile Include="PrismExtensions\DialogActivationBehavior.cs" />
     <Compile Include="PrismExtensions\IWindow.cs" />
@@ -155,7 +155,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Log4NetFacade.cs" />
+    <Compile Include="Log4NetLogger.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

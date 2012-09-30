@@ -3,27 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using ArtemisWest.CallMe.Contract;
-using Microsoft.Practices.Prism.Logging;
 
 namespace ArtemisWest.CallMe.Shell.Services
 {
     public class ActiveProfileService : IActiveProfileService
     {
         private readonly IEnumerable<IActivatedIdentityListener> _activatedIdentityListeners;
+        private readonly ISchedulerProvider _schedulerProvider;
         private readonly IObservable<IProfile> _profileActivated;
         private readonly IIdentityProvider[] _identityProviders;
+        private readonly ILogger _logger;
 
         public ActiveProfileService(IEnumerable<IActivatedIdentityListener> activatedIdentityListeners,
             IEnumerable<Contract.IIdentityProvider> identityProviders, 
-            ILoggerFacade logger)
+            ISchedulerProvider schedulerProvider,
+            ILoggerFactory loggerFactory)
         {
             _activatedIdentityListeners = activatedIdentityListeners;
-
+            _schedulerProvider = schedulerProvider;
+            _logger = loggerFactory.GetLogger();
             
             _identityProviders = identityProviders.ToArray();
 
             var profiles = from listener in _activatedIdentityListeners.ToObservable()
-                           from activation in listener.IdentitiesActivated
+                           from activation in listener.IdentitiesActivated(_schedulerProvider.ThreadPool)
                            select _identityProviders.Select(ip => ip.FindProfile(activation));
 
             //Merge the results from each of the identityProviders into a single sequence. 
@@ -32,7 +35,7 @@ namespace ArtemisWest.CallMe.Shell.Services
                 .Select(queryResult => queryResult.Merge().ToList())
                 .Switch()
                 .Select(MergeProfiles)
-                .Log(logger, "IdentityActivated");
+                .Log(_logger, "IdentityActivated");
         }
 
 

@@ -19,7 +19,7 @@ namespace ArtemisWest.CallMe.Google.UnitTests
         {
             var auth = new StubAuthModel();
             var web = new StubWebrequestService();
-            var sut = new GoogleContactQueryProvider(auth, web);
+            var sut = new GoogleContactQueryProvider(auth, web, new StubLoggerFactory());
             var activeProfile = new Profile(new[] { new PersonalIdentifier(null, null, "dummy") });
 
             web.Response = File.ReadAllText(@"ExampleFullContactQueryResponse.xml");

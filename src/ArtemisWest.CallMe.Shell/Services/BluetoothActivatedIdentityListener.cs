@@ -3,8 +3,8 @@ using System.Reactive.Linq;
 using System.Collections.Generic;
 using System.Text;
 using InTheHand.Net.Sockets;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
-using System.Net.Sockets;
 
 namespace ArtemisWest.CallMe.Shell.Services
 {
@@ -15,23 +15,28 @@ namespace ArtemisWest.CallMe.Shell.Services
         private static readonly Guid CallMeServiceId = new Guid("fa87c0d0-afac-11de-8a39-0800200c9a66"); //Bluetooth chat id
 
         private readonly BluetoothListener _listener;
-        private readonly IObservable<IList<string>> _identitiesActivated;
+        private readonly ILogger _logger;
 
-        public BluetoothActivatedIdentityListener(ISchedulerProvider schedulerProvider)
+        public BluetoothActivatedIdentityListener(ILoggerFactory loggerFactory)
         {
+            _logger = loggerFactory.GetLogger();
             _listener = new BluetoothListener(CallMeServiceId);
-            _identitiesActivated = Observable.Create<IList<string>>(
+        }
+
+        public IObservable<IList<string>> IdentitiesActivated(IScheduler scheduler)
+        {
+            return Observable.Create<IList<string>>(
                 o =>
                     {
                         _listener.Start();
                         var encoder = new ASCIIEncoding();
                         try
                         {
-                            Console.WriteLine("_listener.AcceptBluetoothClient();");
+                            _logger.Debug("_listener.AcceptBluetoothClient();");
                             var bluetoothClient = _listener.AcceptBluetoothClient();
                             var ns = bluetoothClient.GetStream();
-
-                            return ns.ToObservable(1, schedulerProvider.NewThread)
+                            //TODO: Should this be a recursive call, or should I just continue on the same scheduler path? -LC
+                            return ns.ToObservable(1, scheduler)
                                      .Aggregate(new List<byte>(), 
                                                 (acc, cur) => 
                                                 { 
@@ -47,13 +52,7 @@ namespace ArtemisWest.CallMe.Shell.Services
                             o.OnError(ex);
                             return Disposable.Empty;
                         }
-
-                    });
-        }
-
-        public IObservable<IList<string>> IdentitiesActivated
-        {
-            get { return _identitiesActivated; }
+                    }).SubscribeOn(scheduler);
         }
     }
 }

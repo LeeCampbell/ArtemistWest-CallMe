@@ -8,6 +8,16 @@ namespace ArtemisWest.CallMe
 {
     public static class ObservableExtensions
     {
+        public static IObservable<T> Log<T>(this IObservable<T> source, ILogger logger, string name)
+        {
+            return source.Do
+                (                
+                    i => logger.Trace("{0}.OnNext({1})", name, i),
+                    ex => logger.Trace("{0}.OnError({1})", name, ex),
+                    () => logger.Trace("{0}.OnComplete()", name)
+                );
+        }
+
         //TODO: Could potentially upgrade to using tasks/Await-LC
         public static IObservable<byte> ToObservable(
             this Stream source,

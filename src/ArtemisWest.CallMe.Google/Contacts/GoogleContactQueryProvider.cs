@@ -15,6 +15,7 @@ namespace ArtemisWest.CallMe.Google.Contacts
         private readonly IAuthorizationModel _authorizationModel;
         private readonly IWebRequstService _webRequstService;
         private static readonly XmlNamespaceManager Ns;
+        private readonly ILogger _logger;
 
         static GoogleContactQueryProvider()
         {
@@ -26,21 +27,21 @@ namespace ArtemisWest.CallMe.Google.Contacts
             Ns.AddNamespace("gd", "http://schemas.google.com/g/2005");
         }
 
-        public GoogleContactQueryProvider(IAuthorizationModel authorizationModel, IWebRequstService webRequstService)
+        public GoogleContactQueryProvider(IAuthorizationModel authorizationModel, IWebRequstService webRequstService, ILoggerFactory loggerFactory)
         {
             _authorizationModel = authorizationModel;
             _webRequstService = webRequstService;
+            _logger = loggerFactory.GetLogger();
         }
 
         public IObservable<IContact> Search(IProfile activeProfile)
         {
-            Console.WriteLine("GCQP.Search({0})", activeProfile);
             return (
                        from accessToken in _authorizationModel.RequestAccessToken()
-                           .Log("GCQPRequestAccessToken")
+                           .Log(_logger, "GCQPRequestAccessToken")
                        from request in Observable.Return(CreateRequestParams(activeProfile, accessToken))
                            //.Select(token => CreateRequestParams(activeProfile, token))
-                           .Log("ContactRequestParams")
+                           .Log(_logger, "ContactRequestParams")
                        from response in _webRequstService.GetResponse(request)
                        //.Log("ContactResponse")
                        select Translate(response, accessToken)

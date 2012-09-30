@@ -7,21 +7,33 @@ namespace ArtemisWest.CallMe.Google
 {
     public class WebRequstService : IWebRequstService
     {
+        private readonly ILogger _logger;
+
+        public WebRequstService(ILoggerFactory loggerFactory)
+        {
+            _logger = loggerFactory.GetLogger();
+        }
+
         public IObservable<string> GetResponse(HttpRequestParameters requestParameters)
         {
             return Observable.Create<string>(
                 o =>
                     {
-                        Console.WriteLine("GetResponse({0})", requestParameters);
+                        _logger.Debug("GetResponse({0})", requestParameters);
 
                         var request = requestParameters.CreateRequest();
                         
                         var response = request.GetResponse();
                         var responseStream = response.GetResponseStream();
+                        if(responseStream==null)
+                        {
+                            o.OnCompleted();
+                            return Disposable.Empty;
+                        }
                         using (var reader = new StreamReader(responseStream))
                         {
                             string payload = reader.ReadToEnd();
-                            Console.WriteLine("GetResponse({0}) returned {1}", requestParameters, payload);
+                            _logger.Debug("GetResponse({0}) returned {1}", requestParameters, payload);
                             o.OnNext(payload);
                             o.OnCompleted();
                             return Disposable.Empty;
@@ -31,7 +43,6 @@ namespace ArtemisWest.CallMe.Google
                         //    .ToObservable()
                         //    .Select(response =>
                         //                {
-                        //                    Console.WriteLine("Select(response =>");
                         //                    var responseStream = response.GetResponseStream();
                         //                    using (var reader = new StreamReader(responseStream))
                         //                    {

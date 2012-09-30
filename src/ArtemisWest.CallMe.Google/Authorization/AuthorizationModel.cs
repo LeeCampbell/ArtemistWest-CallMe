@@ -15,6 +15,7 @@ namespace ArtemisWest.CallMe.Google.Authorization
     public sealed class AuthorizationModel : IAuthorizationModel
     {
         private readonly ILocalStore _localStore;
+        private readonly ILogger _logger;
         private const string AppName = "CallMe.Spike";
         private const string ClientId = "410654176090.apps.googleusercontent.com";
         private const string ClientSecret = "bDkwW8Y2RnUt0JsjbAwYA8cb";
@@ -26,9 +27,10 @@ namespace ArtemisWest.CallMe.Google.Authorization
         private RequestAuthorizationCode _callback;
         private Session _currentSession;
 
-        public AuthorizationModel(IEnumerable<IResourceScope> availableServices, ILocalStore localStore)
+        public AuthorizationModel(IEnumerable<IResourceScope> availableServices, ILocalStore localStore, ILoggerFactory loggerFactory)
         {
             _localStore = localStore;
+            _logger = loggerFactory.GetLogger();
             _availableServices = availableServices.ToArray();
             _selectedServices = new ObservableCollection<IResourceScope>(_availableServices);
 
@@ -89,16 +91,16 @@ namespace ArtemisWest.CallMe.Google.Authorization
 
         public IObservable<string> RequestAccessToken()
         {
-            Console.WriteLine("RequestAccessToken()");
             var refreshSession = Observable.Defer(RefreshSession);
             var createSession = Observable.Defer(CreateSession);
-            return Observable.Return(CurrentSession)
+            var sequence = Observable.Return(CurrentSession)
                 .Concat(refreshSession)
                 .Concat(createSession)
                 .Where(session => session != null && !session.HasExpired())
                 .Do(session => CurrentSession = session)
                 .Take(1)
                 .Select(session => session.AccessToken);
+            return Observable.Using(() => _logger.Scope("RequestAccessToken"), _ => sequence);
         }
 
         private IObservable<Session> RefreshSession()
@@ -123,7 +125,6 @@ namespace ArtemisWest.CallMe.Google.Authorization
             return Observable.Create<string>(
                 o =>
                 {
-                    Console.WriteLine("getAuthorizationCode()");
                     if (AuthorizationCode != null)
                     {
                         return Observable.Return(AuthorizationCode)
@@ -140,7 +141,7 @@ namespace ArtemisWest.CallMe.Google.Authorization
             return Observable.Create<string>(
                 o =>
                 {
-                    
+
 
                     if (_callback == null)
                         throw new InvalidOperationException("No callback has been registered via the RegisterAuthorizationCallback method");
@@ -176,7 +177,6 @@ namespace ArtemisWest.CallMe.Google.Authorization
 
         private static IObservable<Session> RequestAccessToken(string authorizationCode)
         {
-            Console.WriteLine("requestAccessToken({0})", authorizationCode);
             return Observable.Create<Session>(
                 o =>
                 {
@@ -211,7 +211,6 @@ namespace ArtemisWest.CallMe.Google.Authorization
 
         private IObservable<Session> RequestRefreshedAccessToken(string refreshToken)
         {
-            Console.WriteLine("RequestRefreshedAccessToken({0})", refreshToken);
             return Observable.Create<Session>(
                 o =>
                 {
@@ -267,9 +266,9 @@ namespace ArtemisWest.CallMe.Google.Authorization
         }
     }
 
-    public sealed class OfflineAuthorizationModel: IAuthorizationModel
+    public sealed class OfflineAuthorizationModel : IAuthorizationModel
     {
-        private readonly BehaviorSubject<AuthorizationStatus> _status = new BehaviorSubject<AuthorizationStatus>(AuthorizationStatus.Authorized); 
+        private readonly BehaviorSubject<AuthorizationStatus> _status = new BehaviorSubject<AuthorizationStatus>(AuthorizationStatus.Authorized);
         public IObservable<AuthorizationStatus> Status { get { return _status; } }
         public IResourceScope[] AvailableServices { get; private set; }
         public ObservableCollection<IResourceScope> SelectedServices { get; private set; }

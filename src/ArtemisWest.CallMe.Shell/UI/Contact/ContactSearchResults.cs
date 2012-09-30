@@ -1,5 +1,4 @@
 ﻿using ArtemisWest.CallMe.Contract.Contacts;
-using Microsoft.Practices.Prism.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,14 +10,17 @@ namespace ArtemisWest.CallMe.Shell.UI.Contact
     public class ContactSearchResults
     {
         private readonly IEnumerable<IContactQueryProvider> _queryProviders;
-        private readonly ILoggerFacade _logger;
+        private readonly ILogger _logger;
         private readonly ISchedulerProvider _schedulerProvider;
         private readonly ObservableCollection<IContact> _contacts = new ObservableCollection<IContact>();
 
-        public ContactSearchResults(Services.IActiveProfileService activeProfileService, IEnumerable<IContactQueryProvider> queryProviders, ILoggerFacade logger, ISchedulerProvider schedulerProvider)
+        public ContactSearchResults(Services.IActiveProfileService activeProfileService, 
+            IEnumerable<IContactQueryProvider> queryProviders, 
+            ILoggerFactory loggerFactory, 
+            ISchedulerProvider schedulerProvider)
         {
             _queryProviders = queryProviders.ToArray();
-            _logger = logger;
+            _logger = loggerFactory.GetLogger();
             _schedulerProvider = schedulerProvider;
 
             activeProfileService.ProfileActivated

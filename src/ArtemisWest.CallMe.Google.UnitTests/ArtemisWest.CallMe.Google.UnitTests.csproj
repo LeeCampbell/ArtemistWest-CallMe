@@ -75,14 +75,20 @@
   <ItemGroup>
     <Compile Include="GoogleContactQueryProviderFixture.cs" />
     <Compile Include="GoogleIdentityProviderFixture.cs" />
+    <Compile Include="NullLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StubAuthModel.cs" />
+    <Compile Include="StubLoggerFactory.cs" />
     <Compile Include="StubWebrequestService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArtemisWest.CallMe.Contract\ArtemisWest.CallMe.Contract.csproj">
       <Project>{DEE079B9-3A51-4066-ADA5-C06271ECEBD3}</Project>
       <Name>ArtemisWest.CallMe.Contract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ArtemisWest.CallMe.Core\ArtemisWest.CallMe.Core.csproj">
+      <Project>{23C9BA8F-5EAA-4490-98AB-D250E5537A8A}</Project>
+      <Name>ArtemisWest.CallMe.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\ArtemisWest.CallMe.Google\ArtemisWest.CallMe.Google.csproj">
       <Project>{9D9AD720-6091-4F4E-9D38-16DF71F61B7E}</Project>

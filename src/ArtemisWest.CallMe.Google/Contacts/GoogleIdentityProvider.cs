@@ -14,20 +14,22 @@ namespace ArtemisWest.CallMe.Google.Contacts
     {
         private readonly IAuthorizationModel _authorizationModel;
         private readonly IWebRequstService _webRequstService;
+        private readonly ILogger _logger;
 
-        public GoogleIdentityProvider(Authorization.IAuthorizationModel authorizationModel, IWebRequstService webRequstService)
+        public GoogleIdentityProvider(Authorization.IAuthorizationModel authorizationModel, IWebRequstService webRequstService, ILoggerFactory loggerFactory)
         {
             _authorizationModel = authorizationModel;
             _webRequstService = webRequstService;
+            _logger = loggerFactory.GetLogger();
         }
         public IObservable<IProfile> FindProfile(IList<string> identityKeys)
         {
             return (
                     from request in _authorizationModel.RequestAccessToken()
                             .Select(token => CreateRequestParams(identityKeys, token))
-                            .Log("IdentityRequestParams")
+                            .Log(_logger, "IdentityRequestParams")
                     from response in _webRequstService.GetResponse(request)
-                            .Log("IdentityResponse")
+                            .Log(_logger, "IdentityResponse")
                     select Translate(response)
                     )
                     .Take(1);
@@ -36,7 +38,7 @@ namespace ArtemisWest.CallMe.Google.Contacts
         private HttpRequestParameters CreateRequestParams(IList<string> identityKeys, string accessToken)
         {
             //var query = string.Join(" ", identityKeys);
-            //HACK:
+            //HACK: Need to be able to query Google contacts for multiple keys.
             var query = identityKeys.First();
             var param = new HttpRequestParameters(@"https://www.google.com/m8/feeds/contacts/default/full");
             param.QueryStringParameters.Add("access_token", accessToken);
