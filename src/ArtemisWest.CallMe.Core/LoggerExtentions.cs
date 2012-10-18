@@ -15,7 +15,7 @@ namespace ArtemisWest.CallMe
         [StringFormatMethod("message")]
         public static void Fatal(this ILogger logger, string message, params object[] args)
         {
-            logger.Fatal(null, message);
+            logger.Fatal(null, message, args);
         }
 
         [StringFormatMethod("message")]
@@ -39,7 +39,7 @@ namespace ArtemisWest.CallMe
         [StringFormatMethod("message")]
         public static void Info(this ILogger logger, string message, params object[] args)
         {
-            logger.Info(null, message);
+            logger.Info(null, message, args);
         }
 
         [StringFormatMethod("message")]
@@ -51,7 +51,7 @@ namespace ArtemisWest.CallMe
         [StringFormatMethod("message")]
         public static void Warn(this ILogger logger, string message, params object[] args)
         {
-            logger.Warn(null, message);
+            logger.Warn(null, message, args);
         }
         
         [StringFormatMethod("message")]
@@ -63,7 +63,7 @@ namespace ArtemisWest.CallMe
         [StringFormatMethod("message")]
         public static void Debug(this ILogger logger, string message, params object[] args)
         {
-            logger.Trace(null, message);
+            logger.Trace(null, message, args);
         }
 
         [StringFormatMethod("message")]
@@ -75,7 +75,7 @@ namespace ArtemisWest.CallMe
         [StringFormatMethod("message")]
         public static void Trace(this ILogger logger, string message, params object[] args)
         {
-            logger.Trace(null, message);
+            logger.Trace(null, message, args);
         }
 
         [StringFormatMethod("message")]
@@ -87,7 +87,7 @@ namespace ArtemisWest.CallMe
         [StringFormatMethod("message")]
         public static void Verbose(this ILogger logger, string message, params object[] args)
         {
-            logger.Verbose(null, message);
+            logger.Verbose(null, message, args);
         }
     }
 }

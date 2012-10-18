@@ -4,12 +4,13 @@ using ArtemisWest.CallMe.Shell.UnityExtensions;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.UnityExtensions;
 using Microsoft.Practices.Unity;
+using System;
 
 //TODO: Create a common project for ObservableEx, Converters, LogEx
 //TODO: Add functionality that Logs when an Object is constructed from the Container.
 namespace ArtemisWest.CallMe.Shell
 {
-    public class Bootstrapper : UnityBootstrapper
+    public class Bootstrapper : UnityBootstrapper, IDisposable
     {
         private readonly LoggerFactory _loggerFactory;
 
@@ -91,6 +92,11 @@ namespace ArtemisWest.CallMe.Shell
         protected override void InitializeModules()
         {
             base.InitializeModules();
+        }
+
+        public void Dispose()
+        {
+            Container.Dispose();
         }
     }
 }

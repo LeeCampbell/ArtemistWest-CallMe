@@ -40,10 +40,8 @@ namespace ArtemisWest.CallMe.Google.Contacts
                        from accessToken in _authorizationModel.RequestAccessToken()
                            .Log(_logger, "GCQPRequestAccessToken")
                        from request in Observable.Return(CreateRequestParams(activeProfile, accessToken))
-                           //.Select(token => CreateRequestParams(activeProfile, token))
                            .Log(_logger, "ContactRequestParams")
                        from response in _webRequstService.GetResponse(request)
-                       //.Log("ContactResponse")
                        select Translate(response, accessToken)
                    )
                 .Take(1);

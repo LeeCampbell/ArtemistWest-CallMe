@@ -32,5 +32,11 @@ namespace ArtemisWest.CallMe.Google.Authorization
         {
             return DateTimeOffset.Now > _expires;
         }
+
+        public override string ToString()
+        {
+            //TODO: Validate this print correctly.
+            return string.Format("Session {{ AccessToken : '{0}', RefreshToken : '{1}', Expires : '{2:o}'}}", AccessToken, RefreshToken, Expires); 
+        }
     }
 }

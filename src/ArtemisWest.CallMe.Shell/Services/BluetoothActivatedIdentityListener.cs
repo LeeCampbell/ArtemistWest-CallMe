@@ -28,12 +28,15 @@ namespace ArtemisWest.CallMe.Shell.Services
             return Observable.Create<IList<string>>(
                 o =>
                     {
+                        _logger.Debug("Starting Bluetooth listener...");
                         _listener.Start();
+                        _logger.Debug("Bluetooth listener started.");
                         var encoder = new ASCIIEncoding();
                         try
                         {
                             _logger.Debug("_listener.AcceptBluetoothClient();");
                             var bluetoothClient = _listener.AcceptBluetoothClient();
+                            _logger.Debug("bluetoothClient.GetStream();");
                             var ns = bluetoothClient.GetStream();
                             //TODO: Should this be a recursive call, or should I just continue on the same scheduler path? -LC
                             return ns.ToObservable(1, scheduler)

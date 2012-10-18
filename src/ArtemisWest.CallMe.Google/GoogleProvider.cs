@@ -26,7 +26,7 @@ namespace ArtemisWest.CallMe.Google
             _regionManager = regionManager;
             _loginView = loginView;
             _logger = loggerFactory.GetLogger();
-            _logger.Debug("GoogleProvider()");
+            _logger.Debug("GoogleProvider.ctor(...)");
             _regionManager.Regions["WindowRegion"].Add(_loginView);
             _authorizationModel.RegisterAuthorizationCallback(ShowGoogleLogin);
             _authorizeCommand = new DelegateCommand(RequestAuthorization, () => !Status.IsAuthorized && !Status.IsProcessing);
@@ -93,7 +93,9 @@ namespace ArtemisWest.CallMe.Google
 
         private void RequestAuthorization()
         {
-            _authorizationModel.RequestAccessToken().Subscribe();
+            _authorizationModel.RequestAccessToken()
+                .Log(_logger, "RequestAuthorization().RequestAccessToken()")
+                .Subscribe();
         }
 
         #region INotifyPropertyChanged implementation

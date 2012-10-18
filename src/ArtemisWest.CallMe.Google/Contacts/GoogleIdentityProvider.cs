@@ -26,6 +26,7 @@ namespace ArtemisWest.CallMe.Google.Contacts
         {
             return (
                     from request in _authorizationModel.RequestAccessToken()
+                            .Log(_logger, "RequestAccessToken()")
                             .Select(token => CreateRequestParams(identityKeys, token))
                             .Log(_logger, "IdentityRequestParams")
                     from response in _webRequstService.GetResponse(request)

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reactive.Threading.Tasks;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Subjects;
@@ -12,6 +13,7 @@ using Newtonsoft.Json.Linq;
 //For help see https://developers.google.com/accounts/docs/OAuth2InstalledApp
 namespace ArtemisWest.CallMe.Google.Authorization
 {
+    //TODO: Move actual http calls into a seperat service so we can unit test this class. -LC
     public sealed class AuthorizationModel : IAuthorizationModel
     {
         private readonly ILocalStore _localStore;
@@ -91,33 +93,34 @@ namespace ArtemisWest.CallMe.Google.Authorization
 
         public IObservable<string> RequestAccessToken()
         {
+            var currentSession = Observable.Return(CurrentSession);
             var refreshSession = Observable.Defer(RefreshSession);
             var createSession = Observable.Defer(CreateSession);
-            var sequence = Observable.Return(CurrentSession)
-                .Concat(refreshSession)
-                .Concat(createSession)
+            
+            var sessionPriorities = ObservableExtensions.LazyConcat(currentSession, refreshSession, createSession);
+
+            var sequence = sessionPriorities
                 .Where(session => session != null && !session.HasExpired())
                 .Do(session => CurrentSession = session)
                 .Take(1)
                 .Select(session => session.AccessToken);
-            return Observable.Using(() => _logger.Scope("RequestAccessToken"), _ => sequence);
+            return sequence.Log(_logger, "RequestAccessToken()");
         }
 
         private IObservable<Session> RefreshSession()
         {
             if (CurrentSession == null)
-                return Observable.Empty<Session>();
-            return from authCode in GetAuthorizationCode()
-                   from accessToken in RequestRefreshedAccessToken(CurrentSession.RefreshToken)
-                   select accessToken;
+                return Observable.Empty<Session>().Log(_logger, "refreshSession()");
+            return (from authCode in GetAuthorizationCode()
+                    from accessToken in RequestRefreshedAccessToken(CurrentSession.RefreshToken)
+                    select accessToken).Log(_logger, "refreshSession()");
         }
-
 
         private IObservable<Session> CreateSession()
         {
-            return from authCode in GetAuthorizationCode()
+            return (from authCode in GetAuthorizationCode()
                    from accessToken in RequestAccessToken(authCode)
-                   select accessToken;
+                    select accessToken).Log(_logger, "createSession()");
         }
 
         private IObservable<string> GetAuthorizationCode()
@@ -133,7 +136,8 @@ namespace ArtemisWest.CallMe.Google.Authorization
                     return RequestAuthorizationCode()
                         .Do(newCode => AuthorizationCode = newCode)
                         .Subscribe(o);
-                });
+                })
+                .Log(_logger, "getAuthorizationCode()");
         }
 
         private IObservable<string> RequestAuthorizationCode()
@@ -147,7 +151,8 @@ namespace ArtemisWest.CallMe.Google.Authorization
                         throw new InvalidOperationException("No callback has been registered via the RegisterAuthorizationCallback method");
                     var uri = BuildAuthorizationUri();
                     return _callback(uri).Subscribe(o);
-                });
+                })
+                .Log(_logger, "requestAuthorizationCode()");
         }
 
         private Session LoadSession()
@@ -175,7 +180,7 @@ namespace ArtemisWest.CallMe.Google.Authorization
             return authorizationUri.Uri;
         }
 
-        private static IObservable<Session> RequestAccessToken(string authorizationCode)
+        private IObservable<Session> RequestAccessToken(string authorizationCode)
         {
             return Observable.Create<Session>(
                 o =>
@@ -184,6 +189,22 @@ namespace ArtemisWest.CallMe.Google.Authorization
                     {
                         var request = CreateAccessTokenWebRequest(authorizationCode);
                         var requestedAt = DateTimeOffset.Now;
+                        
+                        var q = from response in request.GetResponseAsync().ToObservable()
+                                let responseStream = response.GetResponseStream()
+                                let reader = new StreamReader(responseStream)
+                                from x in reader.ReadToEndAsync().ToObservable()
+                                select x;
+                       
+                        return q.Select(payload => JObject.Parse(payload))
+                                .Select(json => new Session(
+                                    (string)json["access_token"],
+                                    (string)json["refresh_token"],
+                                    TimeSpan.FromSeconds((int)json["expires_in"]),
+                                    requestedAt))
+                                .Subscribe(o);
+
+                        //Old code
                         using (var response = request.GetResponse())
                         {
                             var responseStream = response.GetResponseStream();
@@ -206,7 +227,8 @@ namespace ArtemisWest.CallMe.Google.Authorization
                         o.OnError(e);
                     }
                     return Disposable.Empty;    //TODO: Provide real Cancellation feature.
-                });
+                })
+                .Log(_logger, string.Format("requestAccessToken({0})", authorizationCode));
         }
 
         private IObservable<Session> RequestRefreshedAccessToken(string refreshToken)
@@ -240,11 +262,11 @@ namespace ArtemisWest.CallMe.Google.Authorization
                         o.OnError(e);
                     }
                     return Disposable.Empty;    //TODO: Provide real Cancellation feature.
-                });
+                })
+                .Log(_logger, string.Format("requestRefreshedAccessToken({0})", refreshToken));
         }
-
-
-        private static HttpWebRequest CreateAccessTokenWebRequest(string authorizationCode)
+        
+        private HttpWebRequest CreateAccessTokenWebRequest(string authorizationCode)
         {
             var requestParams = new HttpRequestParameters(@"https://accounts.google.com/o/oauth2/token");
             requestParams.PostParameters.Add("code", authorizationCode);
@@ -252,17 +274,17 @@ namespace ArtemisWest.CallMe.Google.Authorization
             requestParams.PostParameters.Add("client_secret", ClientSecret);
             requestParams.PostParameters.Add("redirect_uri", RedirectUri);
             requestParams.PostParameters.Add("grant_type", "authorization_code");
-            return requestParams.CreateRequest();
+            return requestParams.CreateRequest(_logger);
         }
 
-        private static HttpWebRequest CreateRefreshTokenWebRequest(string refreshToken)
+        private HttpWebRequest CreateRefreshTokenWebRequest(string refreshToken)
         {
             var requestParams = new HttpRequestParameters(@"https://accounts.google.com/o/oauth2/token");
             requestParams.PostParameters.Add("client_id", ClientId);
             requestParams.PostParameters.Add("client_secret", ClientSecret);
             requestParams.PostParameters.Add("refresh_token", refreshToken);
             requestParams.PostParameters.Add("grant_type", "refresh_token");
-            return requestParams.CreateRequest();
+            return requestParams.CreateRequest(_logger);
         }
     }
 

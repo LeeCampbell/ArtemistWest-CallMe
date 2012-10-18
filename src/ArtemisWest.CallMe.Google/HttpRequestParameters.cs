@@ -38,7 +38,7 @@ namespace ArtemisWest.CallMe.Google
             get { return _headers; }
         }
 
-        public HttpWebRequest CreateRequest()
+        public HttpWebRequest CreateRequest(ILogger logger)
         {
             var queryUri = ConstructUri();
             var request = (HttpWebRequest)WebRequest.Create(queryUri);
@@ -64,6 +64,7 @@ namespace ArtemisWest.CallMe.Google
                 }
             }
 
+            logger.Debug("Created HttpWebRequest {0}", ToString()); 
             return request;
         }
 
