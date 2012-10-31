@@ -5,16 +5,16 @@ using System.Reactive.Linq;
 using ArtemisWest.CallMe.Contract;
 using ArtemisWest.CallMe.Contract.Contacts;
 using ArtemisWest.CallMe.Google.Contacts;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace ArtemisWest.CallMe.Google.UnitTests
 {
-    [TestClass]
+    [TestFixture]
     public class GoogleContactQueryProviderFixture
     {
         private IContact _actual;
 
-        [TestInitialize]
+        [SetUp]
         public void SetUp()
         {
             var auth = new StubAuthModel();
@@ -26,25 +26,25 @@ namespace ArtemisWest.CallMe.Google.UnitTests
             _actual = sut.Search(activeProfile).First();
         }
 
-        [TestMethod]
+        [Test]
         public void Should_return_Title_from_response_xml()
         {
             Assert.AreEqual("Daniel Rowe", _actual.Title);
         }
 
-        [TestMethod]
+        [Test]
         public void Should_return_FullName_from_response_xml()
         {
             Assert.AreEqual("Daniel MiddleName Rowe", _actual.FullName);
         }
 
-        [TestMethod]
+        [Test]
         public void Should_return_Birthday_from_response_xml()
         {
             Assert.AreEqual(new DateTime(1978, 02, 15), _actual.DateOfBirth);
         }
 
-        [TestMethod]
+        [Test]
         public void Should_return_ImageLink_from_response_xml()
         {
             var expected = new UriBuilder(@"https://www.google.com/m8/feeds/photos/media/lee.ryan.campbell%40gmail.com/2b")
@@ -54,7 +54,7 @@ namespace ArtemisWest.CallMe.Google.UnitTests
             Assert.AreEqual(expected.Uri, _actual.Image);
         }
 
-        [TestMethod]
+        [Test]
         public void Should_return_Emails_from_response_xml()
         {
             /* <gd:email rel='http://schemas.google.com/g/2005#home' address='danrowe1978@gmail.com' primary='true'/>
@@ -69,7 +69,7 @@ namespace ArtemisWest.CallMe.Google.UnitTests
             Assert.AreEqual("DRowe@technip.com", emailAddresses[1].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void Should_return_PhoneNumbers_from_response_xml()
         {
             /* <gd:phoneNumber rel='http://schemas.google.com/g/2005#mobile' uri='tel:+33-6-43-06-76-58' primary='true'>+33  6 4306 7658</gd:phoneNumber>*/
@@ -80,7 +80,7 @@ namespace ArtemisWest.CallMe.Google.UnitTests
             Assert.AreEqual("+33  6 4306 7658", phoneNumbers[0].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void Should_return_Organizations_from_response_xml()
         {
             /*<gd:organization rel='http://schemas.google.com/g/2005#work'><gd:orgName>Technip</gd:orgName></gd:organization>*/
@@ -91,7 +91,7 @@ namespace ArtemisWest.CallMe.Google.UnitTests
             Assert.AreEqual("Technip", organizations[0].Name);
         }
 
-        [TestMethod]
+        [Test]
         public void Should_return_Relationships_from_response_xml()
         {
             //<gContact:relation rel='partner'>Anne</gContact:relation>

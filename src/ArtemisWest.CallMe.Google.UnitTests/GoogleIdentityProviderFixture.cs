@@ -1,14 +1,14 @@
 ﻿using System.IO;
 using System.Reactive.Linq;
 using ArtemisWest.CallMe.Google.Contacts;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace ArtemisWest.CallMe.Google.UnitTests
 {
-    [TestClass]
+    [TestFixture]
     public class GoogleIdentityProviderFixture
     {
-        [TestMethod]
+        [Test]
         public void Should_return_Profile_from_request_xml()
         {
             var auth = new StubAuthModel();
